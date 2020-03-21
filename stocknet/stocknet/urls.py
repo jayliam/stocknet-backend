@@ -17,10 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import path,include
-from products.views import pView
+from products.views import productView
 urlpatterns = [
-    path('',include('appp.urls')),
+    path('',include('appp.urls')), # home contact about learnmore and services pages all in there
     path('admin/', admin.site.urls),
-    path('accounts/',include('accounts.urls')),
-    path('product/',include('pView'))
+    path('accounts/',include('accounts.urls')),# login register (contact related) pages 
+    path('product/',productView)
+    
 ]

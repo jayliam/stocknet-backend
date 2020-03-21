@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import Product
 # Create your views here.
-def pView(request):
+def productView(request):
     obj = Product.objects.get(id=1)
     context ={
         'Title'         : obj.Title,
@@ -10,7 +10,7 @@ def pView(request):
         'SalesPrice'    : obj.SalesPrice,
         'Reference'     : obj.Reference,
         'Manufacturer'  : obj.Manufacturer,
-        'Suppliers'     : obj.Suppliers,
+        #'Suppliers'     : obj.Suppliers,
         'Category'      : obj.Category,
         'Quantity'      : obj.Quantity
     }

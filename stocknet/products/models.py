@@ -9,7 +9,7 @@ class Product(models.Model):
     SalesPrice    = models.DecimalField(decimal_places=2, max_digits=20)
     Reference     = models.CharField(max_length=100)
     Manufacturer  = models.CharField(max_length=100)
-    suppliers     = []
+    #suppliers     = []
     Category      = models.CharField(max_length=100)
     Quantity      = models.DecimalField(decimal_places=2, max_digits=20)
     

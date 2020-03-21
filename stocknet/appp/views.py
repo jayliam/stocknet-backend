@@ -7,3 +7,15 @@ def home(request):
     s1.title="L’efficacité aux commandes"
     s1.desc="Passez moins de temps devant l’écran et davantage auprès de vos clients."
     return render(request,"index.html",{'s1':s1})
+
+def contact(request):
+    return render(request,"contact.html",{})
+
+def about(request):
+    return render(request,"about.html",{})
+
+def services(request):
+    return render(request,"services.html",{})
+
+def learnmore(request):
+    return render(request,"learnmore.html",{})

@@ -22,9 +22,9 @@
                     <li><h2 class="hellouser" >Bonjour,  {{user.last_name.upper}}</h2></li>
                     {% endif %}  
                     <li><a href="/" class="headerbttn">Acceuil</a></li>
-                    <li><a href="#" class="headerbttn">Services</a></li>
-                    <li><a href="#" class="headerbttn">Contact</a></li>
-                    <li><a href="#" class="headerbttn">A propos</a></li>
+                    <li><a href="services/" class="headerbttn">Services</a></li>
+                    <li><a href="contact/" class="headerbttn">Contact</a></li>
+                    <li><a href="about/" class="headerbttn">A propos</a></li>
                     {% if user.is_authenticated %}  
                         <li><a href="accounts/logout" class="headerconnexion">Deconnexion</a></li>    
                     {% else %}            
@@ -40,7 +40,7 @@
  
         <div class="title">
             <h1>Gestion des stocks en ligne simple et efficace</h1>
-            <a class="aplusbttn" href="#" >Apprendre Plus</a>
+            <a class="aplusbttn" href="learnmore/" >Apprendre Plus</a>
         </div>
     </div>
     
@@ -82,7 +82,7 @@
         
     <footer>
         <div class="footer-container">
-            <a href="#"><img src="{% static 'img/Logo.svg'%}" class="logofooter" alt="logo"></a>
+            <a href="/"><img src="{% static 'img/Logo.svg'%}" class="logofooter" alt="logo"></a>
             <p class="adress">Bab Ezzouar, 16000<br>DZ</p>
             <ul class="footer-links">
                 <li><a href="#">Conditions de Services</a></li>
