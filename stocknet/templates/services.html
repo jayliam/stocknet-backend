@@ -1,1 +1,21 @@
-services Page
+{% extends 'index.html' %}
+
+{{% block content %}
+
+    <div class="white"><h1> </h1>   </div>
+    <div class="form-style-8">
+
+        <h2> Services </h2>
+        <h1> Services stuff goes here </h1> <br><br><br><br>
+
+        <div>
+            {% for message in messages %}
+            <h3> {{message}} </h3>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="orange"><h1> </h1>   </div>
+
+{% endblock  %}}
+
+
