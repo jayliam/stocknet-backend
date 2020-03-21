@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .models import Product
 # Create your views here.
 def productView(request):
-    obj = Product.objects.get(id=1)
+    obj = Product.objects.get(id=2)
     context= {
         'object': obj 
     }

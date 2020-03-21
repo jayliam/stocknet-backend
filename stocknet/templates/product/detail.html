@@ -6,7 +6,14 @@
     <div class="form-style-8">
 
         <h2> Product Details</h2>
-        <h1> Product details goes here </h1> <br><br><br><br>
+        <h1> Product details goes here </h1> 
+        Title : {{object.Title}}<br>
+        Description : {{object.Description}}<br>
+        SalesPrice : {{object.SalesPrice}}<br>
+        Manufacturer : {{object.Manufacturer}}<br>
+        Category : {{object.Category}}
+        
+        <br><br><br><br>
 
         <div>
             {% for message in messages %}
