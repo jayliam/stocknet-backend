@@ -146,8 +146,7 @@ a:hover{
     font-weight: 700;
     line-height: 1.2;
     text-align: center;
-    
-    
+      
   }
   .monts{
     font-family: 'Montserrat';
@@ -231,8 +230,11 @@ a:hover{
   }
 
   @media only screen and (min-width: 700px){
+    .d4{
+        margin-top: 40px;
+    }
     .ufoot{
-        margin-bottom: -800px;
+        margin-bottom: -60%;
     }
     .ccbtn{
         text-align: right !important;
@@ -310,4 +312,8 @@ a:hover{
       }
       .leftmarg{
           margin-left: 0;
+      }
+      .card-text{
+          font-weight: 400 !important;
+          font-size: 1.1em ;
       }
