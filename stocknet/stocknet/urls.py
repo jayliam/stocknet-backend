@@ -1,6 +1,6 @@
 
 """stocknet URL Configuration
-
+cycle
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.2/topics/http/urls/
 Examples:
@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.views.generic import TemplateView
 from django.urls import path
 from django.urls import path,include
 from products.views import productView
@@ -22,6 +23,7 @@ urlpatterns = [
     path('',include('appp.urls')), # home contact about learnmore and services pages all in there
     path('admin/', admin.site.urls),
     path('accounts/',include('accounts.urls')),# login register (contact related) pages 
-    path('product/',productView)
+    path('product/',productView),
+    path('bootstrap/',TemplateView.as_view(template_name='bootstrap/example.html'))
     
 ]
