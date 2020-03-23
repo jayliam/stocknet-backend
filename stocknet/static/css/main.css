@@ -448,19 +448,7 @@ nav ul li a:hover {
         padding-top: 10px;
         margin-bottom: 40px;
     }
-    .footer-links{
-        font-weight: 400;
-        margin-bottom: 30px;
-        margin-top: 20px;
-        margin-left: 80em;
-        display: flex;
-        font-weight: 400;      
-    }
-    .footer-links li {
-        margin-left: 3em;
-        margin-top: -3em;
-        
-    }
+
     .title h1{
 
         font-size: 200%;
