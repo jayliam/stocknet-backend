@@ -42,7 +42,7 @@ def login(request):
         if user is not None:
             auth.login(request,user)
             print('user logged in')
-            return redirect('/')
+            return redirect('/dashboard')
         else:
             messages.info(request,'user doesnt exist')
             return redirect('login')

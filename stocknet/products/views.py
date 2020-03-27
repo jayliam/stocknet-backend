@@ -33,6 +33,7 @@ def productView(request):
     context= {
         'object': obj 
     }
+    return render(request, "product/product_detail.html", context)
 # OR
     # context ={
     #     'Title'         : obj.Title,
@@ -46,4 +47,4 @@ def productView(request):
     #     'Quantity'      : obj.Quantity
     # }
 
-    return render(request, "product/product_detail.html", context)
+    

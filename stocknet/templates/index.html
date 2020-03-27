@@ -54,10 +54,15 @@
             </li>
 
             {% if user.is_authenticated %}
+
             <li class="nav-item">
-              <a class="   mybutton " href="/accounts/logout" role="button">Deconnection</a>
-                
+              <a class=" mybutton " href="/dashboard" role="button">Tableau de Bord</a>                
             </li>
+            <li class="nav-item">
+              <a class=" mybutton " href="/accounts/logout" role="button">Deconnection</a>                
+            </li>
+
+
             {% else %}
             <li class="nav-item">
                 <a class="   mybutton " href="/accounts/login" role="button">Connection</a>
