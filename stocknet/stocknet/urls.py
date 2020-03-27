@@ -18,12 +18,13 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 from django.urls import path
 from django.urls import path,include
-from products.views import productView
+from products.views import productView,productCreateView
 urlpatterns = [
     path('',include('appp.urls')), # home contact about learnmore and services pages all in there
     path('admin/', admin.site.urls),
     path('accounts/',include('accounts.urls')),# login register (contact related) pages 
     path('product/',productView),
+    path('createproduct/',productCreateView),
     path('bootstrap/',TemplateView.as_view(template_name='bootstrap/example.html'))
     
 ]
