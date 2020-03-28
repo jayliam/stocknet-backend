@@ -17,6 +17,8 @@
      <!-- CSS Files -->
     
     <link href="{% static '/assets/css/demo.css'%}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'assets/css/mycss.css'%}"> 
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.css'%}"> 
     <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css'%}"> 
     <link rel="stylesheet" href="{% static 'assets/css/light-bootstrap-dashboard.css'%}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'assets/css/font-awesome.min.css'%}" rel="stylesheet">
@@ -56,7 +58,7 @@
                     <li class=" dropdown nav-item active ">
                         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="nc-icon nc-icon fa fa-cubes"></i>
-                            <p>Produits</p>   
+                            <p>Produits : {{Pcount}}</p>   
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="/product_create">Ajouter Produit</a>
@@ -68,7 +70,7 @@
                     <li class=" dropdown nav-item ">
                         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="nc-icon nc-icon fa fa-users"></i>
-                            <p>Clients</p>   
+                            <p>Clients : {{Ccount}}</p>   
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="/client_create">Ajouter Client</a>
@@ -80,7 +82,7 @@
                     <li class=" dropdown nav-item ">
                         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="nc-icon nc-icon fa fa-truck"></i>
-                            <p>Fournisseurs</p>   
+                            <p>Fournisseurs : {{Scount}}</p>   
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="/supplier_create">Ajouter Fournisseur</a>
@@ -167,7 +169,7 @@
                                         <div class="row">
                                             <div class="col-md-12 pr-1 ">
                                                 <div class="form-group">
-                                                    <label for="exampleInputEmail1">Description</label>
+                                                    <label>Description</label>
                                                     <input type="text" name="description" class="form-control" >
                                                 </div>
                                             </div>
@@ -205,45 +207,48 @@
                                             </div>
                                             <div class="col-md-6 pr-1">
                                                 <div class="form-group">
+                                                    <label>Categorie</label>
+                                                    
+                                                    <input type="text" name="category" class="form-control" >
+                                                    
+                                                </div>
+                                            </div>
+                                            
 
+                                        </div>
+                                        <div class="row">
+                                            
+                                            <div class="col-md-8 pr-1">
+                                                <div class="form-group">
                                                     <label>Fournisseurs <br></label>
                                                     <div class="card">
                                                         <div class="card-body ">
-                                                            <label for="sel1">Select list:</label>
-                                                            <select class="form-control" id="sel1">
-                                                                    {% for s in list_suppliers%}
-                                                                    <option>{{s.Name}}</option>
-                                                                    {% endfor %}
-                                                            </select>
-                                                            <select class="custom-select" multiple>
-                                                                <option selected>Open this select menu</option>
-                                                                <option value="1">One</option>
-                                                                <option value="2">Two</option>
-                                                                <option value="3">Three</option>
-                                                            </select>
-
-                                                            <!-- {% for s in list_suppliers%}                                                            
-                                                            <input type="checkbox" id="suppliers" name="suppliers" value="Bike">
+                                                            {% for s in list_suppliers%}
+                                                            <input type="checkbox" id="suppliers" name="suppliers" value="{{s.Name}}">
                                                             <label  for="suppliers"> {{s.Name}} </label><br>
-                                                            {% endfor %} -->
+                                                            {% endfor %}
+                                                            <a class="btn  pull-right btn-sm" href="/supplier_create">
+                                                               Ajouter Fournisseur
+                                                            </a>
+                                                            
+                                                                                                  
 
-
-
-                                                        
                                                         </div>
                                                     </div>
-
+                                                
                                                 </div>
                                             </div>
+                                            
 
-                                        </div>
+                                        </div>           
                                         
-                                        {% for message in messages %}
-                                        <h4> {{message}} </h4>
-                                        {% endfor %}
-
-
-                                        <button type="submit" class="btn btn-info btn-fill pull-right">Mettre a jour Profile </button>
+                              
+                                                                 
+                                                    
+                                        {% for message in messages %}              
+                                        <h6 class="text-danger small">{{message}}</h6>
+                                        {% endfor %} 
+                                        <button type="submit" class="btn btn-info btn-fill pull-right">Ajouter Produit </button>
                                         <div class="clearfix"></div>
                                     </form>
                                 </div>
@@ -351,6 +356,7 @@
  -->
 </body>
 <!--   Core JS Files   -->
+<script src="{% static 'assets/js/core/myjs.js'%}" type="text/javascript"></script>
 <script src="{% static 'assets/js/core/jquery.3.2.1.min.js'%}" type="text/javascript"></script>
 <script src="{% static 'assets/js/core/popper.min.js'%}" type="text/javascript"></script>
 <script src="{% static 'assets/js/core/bootstrap.min.js'%}" type="text/javascript"></script>
@@ -363,7 +369,161 @@
 <!-- Control Center for Light Bootstrap Dashboard: scripts for the example pages etc -->
 <script src="{% static 'assets/js/light-bootstrap-dashboard.js'%}" type="text/javascript"></script>
 <!-- Light Bootstrap Dashboard DEMO methods, don't include it in your project! -->
+<script>
+    // Created by @conmarap.
 
+Array.prototype.search = function(elem) {
+    for(var i = 0; i < this.length; i++) {
+        if(this[i] == elem) return i;
+    }
+    
+    return -1;
+};
+
+var Multiselect = function(selector) {
+    if(!$(selector)) {
+        console.error("ERROR: Element %s does not exist.", selector);
+        return;
+    }
+
+    this.selector = selector;
+    this.selections = [];
+
+    (function(that) {
+        that.events();
+    })(this);
+};
+
+Multiselect.prototype = {
+    open: function(that) {
+        var target = $(that).parent().attr("data-target");
+
+        // If we are not keeping track of this one's entries, then
+        // start doing so.
+        if(!this.selections) {
+            this.selections = [ ];
+        }
+
+        $(this.selector + ".multiselect").toggleClass("active");
+    },
+
+    close: function() {
+        $(this.selector + ".multiselect").removeClass("active");
+    },
+
+    events: function() {
+        var that = this;
+
+        $(document).on("click", that.selector + ".multiselect > .title", function(e) {
+            if(e.target.className.indexOf("close-icon") < 0) {
+                that.open();
+            }
+        });
+
+        $(document).on("click", that.selector + ".multiselect option", function(e) {
+            var selection = $(this).attr("value");
+            var target = $(this).parent().parent().attr("data-target");
+
+            var io = that.selections.search(selection);
+
+            if(io < 0) that.selections.push(selection);
+            else that.selections.splice(io, 1);
+
+            that.selectionStatus();
+            that.setSelectionsString();
+        });
+
+        $(document).on("click", that.selector + ".multiselect > .title > .close-icon", function(e) {
+            that.clearSelections();
+        });
+
+        $(document).click(function(e) {
+            if(e.target.className.indexOf("title") < 0) {
+                if(e.target.className.indexOf("text") < 0) {
+                    if(e.target.className.indexOf("-icon") < 0) {
+                        if(e.target.className.indexOf("selected") < 0 ||
+                           e.target.localName != "option") {
+                            that.close();
+                        }
+                    }
+                }
+            }
+        });
+    },
+
+    selectionStatus: function() {
+        var obj = $(this.selector + ".multiselect");
+
+        if(this.selections.length) obj.addClass("selection");
+        else obj.removeClass("selection");
+    },
+
+    clearSelections: function() {
+        this.selections = [];
+        this.selectionStatus();
+        this.setSelectionsString();
+    },
+
+    getSelections: function() {
+        return this.selections;
+    },
+
+    setSelectionsString: function() {
+        var selects = this.getSelectionsString().split(", ");
+        $(this.selector + ".multiselect > .title").attr("title", selects);
+
+        var opts = $(this.selector + ".multiselect option");
+
+        if(selects.length > 6) {
+            var _selects = this.getSelectionsString().split(", ");
+            _selects = _selects.splice(0, 6);
+            $(this.selector + ".multiselect > .title > .text")
+                .text(_selects + " [...]");
+        }
+        else {
+            $(this.selector + ".multiselect > .title > .text")
+                .text(selects);
+        }
+
+        for(var i = 0; i < opts.length; i++) {
+            $(opts[i]).removeClass("selected");
+        }
+
+        for(var j = 0; j < selects.length; j++) {
+            var select = selects[j];
+
+            for(var i = 0; i < opts.length; i++) {
+                if($(opts[i]).attr("value") == select) {
+                    $(opts[i]).addClass("selected");
+                    break;
+                }
+            }
+        }
+    },
+
+    getSelectionsString: function() {
+        if(this.selections.length > 0)
+            return this.selections.join(", ");
+        else return "Select";
+    },
+
+    setSelections: function(arr) {
+        if(!arr[0]) {
+            error("ERROR: This does not look like an array.");
+            return;
+        }
+
+        this.selections = arr;
+        this.selectionStatus();
+        this.setSelectionsString();
+    },
+};
+
+$(document).ready(function() {
+    var multi = new Multiselect("#countries");
+});
+
+</script>
 
 
 </html>

@@ -2718,6 +2718,7 @@ Copyright (c) 2015 Daniel Eden
     color: #333333;
     opacity: 1;
     text-decoration: none;
+	border-radius: 20px;
 }
 
 .dropdown-menu.dropdown-blue>li>a:hover,

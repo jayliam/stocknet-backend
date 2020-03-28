@@ -56,7 +56,7 @@
                     <li class=" dropdown nav-item  ">
                         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="nc-icon nc-icon fa fa-cubes"></i>
-                            <p>Produits</p>   
+                            <p>Produits : {{Pcount}}</p>   
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="/product_create">Ajouter Produit</a>
@@ -68,7 +68,7 @@
                     <li class=" dropdown nav-item ">
                         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="nc-icon nc-icon fa fa-users"></i>
-                            <p>Clients</p>   
+                            <p>Clients : {{Ccount}}</p>   
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="/client_create">Ajouter Client</a>
@@ -80,7 +80,7 @@
                     <li class=" dropdown nav-item active">
                         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="nc-icon nc-icon fa fa-truck"></i>
-                            <p>Fournisseurs</p>   
+                            <p>Fournisseurs : {{Scount}}</p>   
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="/supplier_create">Ajouter Fournisseur</a>
@@ -143,7 +143,84 @@
             <div class="content">
                 <div class="container-fluid">
                     <div class="section">
-                       
+                       <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Ajouter un fournisseur</h4>
+                                </div>
+                                <div class="card-body mr-3 ">
+                                    <form  method="POST"> {% csrf_token %}
+                                        <div class="row">
+                                            <div class="col-md-6 pr-1">
+                                                <div class="form-group">
+                                                    <label>Nom </label>
+                                                    <input type="text" name="name" class="form-control"  >
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mt-4 ">
+                                                <div class="form-group">
+                                                    <select class="custom-select" id="type" name="type">
+                                                        <option value="particulier">particulier</option>
+                                                        <option value="entreprise">entreprise</option>      
+                                                    </select>       
+                                                </div> 
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 pr-1 ">
+                                                <div class="form-group">
+                                                    <label>Numero telephone</label>
+                                                    <input type="number" name="phone" class="form-control" >
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 pr-1 ">
+                                                <div class="form-group">
+                                                    <label>Categorie</label>
+                                                    <input type="text" name="category" class="form-control" >
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 pr-1">
+                                                <div class="form-group">
+                                                    <label>Reference</label>
+                                                    <input type="text" name="reference" class="form-control" >
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8 pr-1">
+                                                <div class="form-group">
+                                                    <label>Adresse</label>
+                                                    <input type="text" name="adress" class="form-control" >
+                                                </div>
+                                            </div>
+                                            
+
+                                        </div>
+                                        <div class="row">
+                                            
+                                            <div class="col-md-12 pr-1">
+                                                <div class="form-group">
+                                                    <label>Note</label>
+                                                    
+                                                    <input type="text" name="note" class="form-control" >
+                                                    
+                                                </div>
+                                            </div>
+                                
+                                            
+
+                                        </div>
+                                        
+                                        {% for message in messages %}              
+                                        <h6 class="text-danger small">{{message}}</h6>
+                                        {% endfor %} 
+                                        
+                                        <button type="submit" class="btn btn-info btn-fill pull-right">Ajouter Fournisseur </button>
+                                        <div class="clearfix"></div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                 </div>

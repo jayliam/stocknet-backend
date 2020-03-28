@@ -12,7 +12,7 @@ for s in Supplier.objects.all():
 
 class Product(models.Model):
     Title         = models.CharField(max_length=100)
-    Description   = models.TextField(blank=True, null=True)
+    Description   = models.CharField(max_length=100, null = True)
     PurchasePrice = models.DecimalField(decimal_places=2, max_digits=20,default=0)
     SalesPrice    = models.DecimalField(decimal_places=2, max_digits=20,default=0,null=True)
     Reference     = models.CharField(max_length=100)

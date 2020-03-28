@@ -87,60 +87,249 @@ def account(request):
                         user = auth.authenticate(username=usr,password=password1)
                         login(request,user) 
                         print('user updated')
-                        return redirect('account')  
+                        return redirect('account')
+              
         else:
             print('les mots de passe ne correspondent pas')
             messages.info(request,'les mots de passe ne correspondent pas')
+
         return redirect('account')
     else:
-        return render(request,"dashboard/account.html",{})
+        Pcount= Product.objects.all().count()
+        Ccount= Client.objects.all().count()
+        Scount= Supplier.objects.all().count()
+        context= {
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount
+    }
+        return render(request,"dashboard/account.html",context)
 
 def product_create(request):
-    
-    suppliers = Supplier.objects.all()
-    list_suppliers= list(suppliers)
-    print(list_suppliers)
-    
-    context = {
-        "list_suppliers" : list_suppliers
-    }
-    return render(request,"dashboard/product/product_create.html",context)
+    if request.method == 'POST':
+        title = request.POST['title']
+        description = request.POST['description']
+        purchaseprice = request.POST['purchaseprice']
+        salesprice = request.POST['salesprice']
+        reference = request.POST['reference']
+        manufacturer = request.POST['manufacturer']
+        suppliers = request.POST.getlist('suppliers')
+        category = request.POST['category']
+        quantity = request.POST['quantity']
+
+        error= False
+        if not title : 
+            messages.info(request,'Le champ titre ne peut pas etre vide')
+            error=True
+        if not purchaseprice : 
+            messages.info(request,'Le champ Prix dachat ne peut pas etre vide')
+            error=True
+        if not salesprice : 
+            messages.info(request,'Le champ Prix de vente ne peut pas etre vide')
+            error=True
+        if not reference : 
+            messages.info(request,'Le champ reference ne peut pas etre vide')
+            error=True
+        if not manufacturer : 
+            messages.info(request,'Le champ Fabricant ne peut pas etre vide')
+            error=True
+        if not category : 
+            messages.info(request,'Le champ Categorie ne peut pas etre vide')
+            error=True
+        if not quantity : 
+            messages.info(request,'Le champ quantité ne peut pas etre vide')
+            error=True
+        if not suppliers : 
+            messages.info(request,'Le champ Fournisseurs  ne peut pas etre vide')
+            error=True
+        if error:
+            return redirect('product_create')
+
+
+        product = Product(
+            Title=title, 
+            Description=description,
+            PurchasePrice=purchaseprice,
+            SalesPrice = salesprice,
+            Reference = reference,
+            Manufacturer = manufacturer,
+            Suppliers = suppliers,
+            Category = category,
+            Quantity = quantity
+        )
+        product.save()
+        messages.info(request,'Produit Ajouté')
+        return redirect('product_list')
+
+    else:
+        Pcount= Product.objects.all().count()
+        Ccount= Client.objects.all().count()
+        Scount= Supplier.objects.all().count() 
+
+        suppliers = Supplier.objects.all()
+        list_suppliers= list(suppliers)
+        print(list_suppliers)
+        
+        context = {
+            "list_suppliers" : list_suppliers,
+            "Pcount": Pcount,
+            "Ccount": Ccount,
+            "Scount": Scount
+        }
+        return render(request,"dashboard/product/product_create.html",context)
 
 def product_list(request):
     
     products = Product.objects.all()
     list_products= list(products)
     print(list_products)
-    
-    context = {
-        "list_products" : list_products
+    Pcount= Product.objects.all().count()
+    Ccount= Client.objects.all().count()
+    Scount= Supplier.objects.all().count()
+    context= {
+    "Pcount": Pcount,
+    "Ccount": Ccount,
+    "Scount": Scount,
+    "list_products" : list_products
     }
+
     return render(request,"dashboard/product/product_list.html",context)
 
 def client_create(request):
-    return render(request,"dashboard/client/client_create.html",{})
+    if request.method == 'POST':
+        Type = request.POST['type']
+        Name = request.POST['name']
+        Phone = request.POST['phone']
+        Email = request.POST['email']
+        Reference = request.POST['reference']
+        Adress = request.POST['adress']
+        Note = request.POST['note']
+        
+        error= False
+        if not Name : 
+            messages.info(request,'Le champ Nom  ne peut pas etre vide')
+            error=True
+        if not Phone : 
+            messages.info(request,'Le champ Numero telephone  ne peut pas etre vide')
+            error=True
+        if not Reference : 
+            messages.info(request,'Le champ Reference ne peut pas etre vide')
+            error=True
+        if not Adress : 
+            messages.info(request,'Le champ Reference ne peut pas etre vide')
+            error=True
+        if error:
+            return redirect('client_create')
+
+        client = Client(
+            Type = Type,
+            Name = Name,
+            Phone = Phone,
+            Email = Email,
+            Reference = Reference,
+            Adress = Adress,
+            Note = Note
+        )
+        client.save()
+        messages.info(request,'Client Ajouté')
+        return redirect('client_list')
+
+    else:
+        Pcount= Product.objects.all().count()
+        Ccount= Client.objects.all().count()
+        Scount= Supplier.objects.all().count()
+        context= {
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount
+    }
+        return render(request,"dashboard/client/client_create.html",context)
 
 def client_list(request):
     clients = Client.objects.all()
     list_clients= list(clients)
     print(list_clients)
     
-    context = {
-        "list_clients" : list_clients
+
+    Pcount= Product.objects.all().count()
+    Ccount= Client.objects.all().count()
+    Scount= Supplier.objects.all().count()
+    context= {
+    "Pcount": Pcount,
+    "Ccount": Ccount,
+    "Scount": Scount,
+    "list_clients" : list_clients
     }
     return render(request,"dashboard/client/client_list.html",context)
 
 def supplier_create(request):
-    return render(request,"dashboard/supplier/supplier_create.html",{})
+    if request.method == 'POST':
+        Type = request.POST['type']
+        Name = request.POST['name']
+        Phone = request.POST['phone']
+        Category = request.POST['category']
+        Reference = request.POST['reference']
+        Adress = request.POST['adress']
+        Note = request.POST['note']
+        
+        error= False
+        if not Name : 
+            messages.info(request,'Le champ Nom  ne peut pas etre vide')
+            error=True
+        if not Phone : 
+            messages.info(request,'Le champ Numero telephone  ne peut pas etre vide')
+            error=True
+        if not Reference : 
+            messages.info(request,'Le champ Reference ne peut pas etre vide')
+            error=True
+        if not Adress : 
+            messages.info(request,'Le champ Reference ne peut pas etre vide')
+            error=True
+        if not Category : 
+            messages.info(request,'Le champ Categorie ne peut pas etre vide')
+            error=True
+
+        if error:
+            return redirect('client_create')
+
+        supplier = Supplier(
+            Type = Type,
+            Name = Name,
+            Phone = Phone,
+            Category = Category,
+            Reference = Reference,
+            Adress = Adress,
+            Note = Note
+        )
+        supplier.save()
+        messages.info(request,'Client Ajouté')
+        return redirect('supplier_list')
+
+    else:
+        Pcount= Product.objects.all().count()
+        Ccount= Client.objects.all().count()
+        Scount= Supplier.objects.all().count()
+        context= {
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount
+    }
+        return render(request,"dashboard/supplier/supplier_create.html",context)
 
 def supplier_list(request):
+    Pcount= Product.objects.all().count()
+    Ccount= Client.objects.all().count()
+    Scount= Supplier.objects.all().count()
     suppliers = Supplier.objects.all()
     list_suppliers= list(suppliers)
-    print(list_suppliers)
-    
-    context = {
-        "list_suppliers" : list_suppliers
+    context= {
+    "Pcount": Pcount,
+    "Ccount": Ccount,
+    "Scount": Scount,
+    "list_suppliers" : list_suppliers
     }
+
+
     return render(request,"dashboard/supplier/supplier_list.html",context)
 
 def contact(request):

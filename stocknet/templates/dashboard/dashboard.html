@@ -56,7 +56,7 @@
                     <li class=" dropdown nav-item ">
                         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="nc-icon nc-icon fa fa-cubes"></i>
-                            <p>Produits</p>   
+                            <p>Produits : {{Pcount}}</p>   
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="/product_create">Ajouter Produit</a>
@@ -68,7 +68,7 @@
                     <li class=" dropdown nav-item ">
                         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="nc-icon nc-icon fa fa-users"></i>
-                            <p>Clients</p>   
+                            <p>Clients : {{Ccount}}</p>   
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="/client_create">Ajouter Client</a>
@@ -80,7 +80,7 @@
                     <li class=" dropdown nav-item ">
                         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="nc-icon nc-icon fa fa-truck"></i>
-                            <p>Fournisseurs</p>   
+                            <p>Fournisseurs : {{Scount}}</p>   
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="/supplier_create">Ajouter Fournisseur</a>
@@ -143,18 +143,22 @@
             <div class="content">
                 <div class="container-fluid">
                     <div class="section">
+                    
                        <div class="col-md-3">
                             <div class="card ">
                                 <div class="card-header">
-                                    <h4>Stats: <br><small></small></h4>
+                                    <h3 class="font-weight-normal" > Stats: <br></h3>
                                 </div>
                                 <div class="card-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">First item</li>
+                                        <li class="list-group-item">Second item</li>
+                                        <li class="list-group-item">Third item</li>
+                                      </ul> 
                                     <a href="/product_list ">Produits : {{Pcount}} <br> </a>
                                     <a href="/client_list ">Client : {{Ccount}} <br> </a>
                                     <a href="/supplier_list ">Fournisseurs : {{Scount}} </a>
-
-                                    
-                                                                   
+                                     
                                 </div>
                             </div>
                        </div> 
