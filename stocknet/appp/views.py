@@ -19,10 +19,30 @@ def dashboard(request):
     Pcount= Product.objects.all().count()
     Ccount= Client.objects.all().count()
     Scount= Supplier.objects.all().count()
+
+    products = Product.objects.all()
+    list_products= list(products)
+    repture_count=0
+    stock_count=0
+    stock_neg=0
+    nbstock_neg=0
+    for entry in list_products:
+        if entry.Quantity>0:
+            stock_count=stock_count+ entry.Quantity
+        if entry.Quantity == 0:
+            repture_count=repture_count+ 1
+        if entry.Quantity<0 :
+            stock_neg=stock_neg+1
+            nbstock_neg=nbstock_neg+entry.Quantity
+
     contex= {
         "Pcount": Pcount,
         "Ccount": Ccount,
-        "Scount": Scount
+        "Scount": Scount,
+        "stock_count": int(stock_count),
+        "stock_neg": stock_neg,
+        "repture_count": repture_count,
+        "nbstock_neg": int(nbstock_neg)
     }
     return render(request,"dashboard/dashboard.html",contex)
 
@@ -194,6 +214,43 @@ def product_list(request):
     }
 
     return render(request,"dashboard/product/product_list.html",context)
+
+def reptureproduct_list(request):
+    
+    products = Product.objects.all()
+    list_products= list(products)
+    print(list_products)
+    Pcount= Product.objects.all().count()
+    Ccount= Client.objects.all().count()
+    Scount= Supplier.objects.all().count()
+
+
+    context= {
+    "Pcount": Pcount,
+    "Ccount": Ccount,
+    "Scount": Scount,
+    "list_products" : list_products
+    }
+
+    return render(request,"dashboard/product/reptureroduct_list.html",context)
+def negproduct_list(request):
+    
+    products = Product.objects.all()
+    list_products= list(products)
+    print(list_products)
+    Pcount= Product.objects.all().count()
+    Ccount= Client.objects.all().count()
+    Scount= Supplier.objects.all().count()
+
+
+    context= {
+    "Pcount": Pcount,
+    "Ccount": Ccount,
+    "Scount": Scount,
+    "list_products" : list_products
+    }
+
+    return render(request,"dashboard/product/negproduct_list.html",context)
 
 def client_create(request):
     if request.method == 'POST':

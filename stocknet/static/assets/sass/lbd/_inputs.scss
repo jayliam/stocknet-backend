@@ -13,7 +13,7 @@
 
 .form-control {
     background-color: $white-bg;
-    border: 1px solid $light-gray;
+    border: 1px solid $light-gray !important;
     border-radius: $border-radius-base;
     color: #565656;
     @include input-size($padding-base-vertical, $padding-base-horizontal - 4, $height-base);

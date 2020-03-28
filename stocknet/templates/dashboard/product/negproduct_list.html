@@ -9,7 +9,7 @@
     <link rel="apple-touch-icon" sizes="76x76" href="{% static 'assets/img/apple-icon.png' %}">
     <link rel="icon" type="image/png" href="{% static 'assets/img/favicon.ico'%}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>Dashboard</title>
+    <title>Liste Produits</title>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
@@ -45,7 +45,7 @@
                         </a>
                     </li>
 
-                    <li class="nav-item active">
+                    <li class="nav-item ">
                         <a class="nav-link" href="/dashboard">
                             <i class="nc-icon fa fa-line-chart nc-paper-2"></i>
                             <p>Tableau de bord</p>
@@ -53,7 +53,7 @@
                     </li>
 
 
-                    <li class=" dropdown nav-item ">
+                    <li class=" dropdown nav-item active ">
                         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="nc-icon nc-icon fa fa-cubes"></i>
                             <p>Produits : {{Pcount}}</p>   
@@ -68,7 +68,7 @@
                     <li class=" dropdown nav-item ">
                         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="nc-icon nc-icon fa fa-users"></i>
-                            <p>Clients : {{Ccount}}</p>   
+                            <p>Clients  : {{Ccount}}</p>   
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="/client_create">Ajouter Client</a>
@@ -129,7 +129,7 @@
                         </ul>
                         <ul class="navbar-nav ml-auto">
    
-
+                            
                             <li class="nav-item">
                                 <a class="nav-link" href="/accounts/logout">
                                     <span class="no-icon">Deconnexion</span>
@@ -143,89 +143,68 @@
             <div class="content">
                 <div class="container-fluid">
                     <div class="section">
-                        
-                        <div class="jumbotron jumbotron-fluid col-md-10">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-md-9">    
-                                        <h1 class="display-6">Tableau de bord</h1>
-                                        <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
-                                    </div>    
-                                    <div class="col-md-3">
-                                        <img class="img-fluid " src="{% static 'img/website.png'%}" class="mr-3" alt="...">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-deck text-center">
+                        <div class="table-responsive table-full-width">
+
+                            {% for message in messages %}  
+                            <div class="alert alert-success col-md-2 " role="alert">
+                            {{message}}
+                            </div>            
                             
-                            <div class="card border-dark mb-3" style="max-width: 18rem;">
-                                <div class="card-header  ">  
-                                    <a class="text-dark " href="/product_list "><h3 class="font-weight-normal ml-1 mx-auto" > Produits   </h3><br> </a>
-                                    
+                            {% endfor %}
+                            <div class="row">
+                                <div class="col-md-10" >
+                                    <h2 class="font-weight-normal" >stock négatif</h2>
+
                                 </div>
-                                <div class="card-body text-dark mx-auto">
-                                   <h1 class="font-weight-normal ml-1 " >  {{Pcount}} </h1> 
-                                </div>
-                            </div>
-                            
-                            <div class="card border-dark mb-3" style="max-width: 18rem;">
-                                <div class="card-header  ">  
-                                    <a class="text-dark " href="/client_list "><h3 class="font-weight-normal ml-1 mx-auto" > Clients   </h3><br> </a>
-                                    
-                                </div>
-                                <div class="card-body text-dark mx-auto">
-                                   <h1 class="font-weight-normal ml-1 " >  {{Ccount}} </h1> 
-                                </div>
-                            </div>
-                            
-                            <div class="card border-dark mb-3" style="max-width: 18rem;">
-                                <div class="card-header  ">  
-                                    <a class="text-dark " href="/supplier_list ">
-                                        <h3 class="font-weight-normal ml-1 mx-auto" > Fournisseurs   </h3><br> 
+                                <div class="col-md-2" >
+                                    <a class="btn  btn-bg mt-4" href="/product_create">
+                                        Ajouter Produit
                                     </a>
-                                    
-                                </div>
-                                <div class="card-body text-dark mx-auto">
-                                   <h1 class="font-weight-normal ml-1 " >  {{Scount}}  </h1> <br>
                                 </div>
                             </div>
                             
-                            
+
+
+
+
+                            <table class="table table-hover table-striped">
+                                <thead>
+                                    <th>Titre</th>
+                                    <th>Prix d'achat </th>
+                                    <th>Prix de vente</th>
+                                    <th>Reference</th>
+                                    <th>Fabricant</th>
+                                    <th>Fournisseurs </th>
+                                    <th>Categorie</th>
+                                    <th>Quantité</th>
+                                </thead>
+                                <tbody>
+                                
+                                 
+                                {% for entry in list_products %}
+                                    {% if entry.Quantity < 0 %}
+                                    <tr>
+                                        <td>{{ entry.Title }} {{id}}  </td>
+                                        <td>{{ entry.PurchasePrice }}</td>
+                                        <td>{{ entry.SalesPrice }}</td>
+                                        <td>{{ entry.Reference }}</td>
+                                        <td>{{ entry.Manufacturer }}</td>
+                                        <td>{{ entry.Suppliers }}</td>
+                                        <td>{{ entry.Category }}</td>
+                                        
+                                            <td class=" text-danger " > {{ entry.Quantity }}</td>
+                                        
+
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %} 
+                                
+                                </tbody>
+                            </table>
+                         
                         </div>
-                        <div class="card-deck text-center">
-                            <div class="card border-dark mb-3" style="max-width: 18rem;">
-                                <div class="card-header  ">  
-                                    <a class="text-dark " href="/product_list "><h3 class="font-weight-normal ml-1 mx-auto" >  Stock Total   </h3><br> </a>
-                                    
-                                </div>
-                                <div class="card-body text-dark mx-auto">
-                                   <h1 class="font-weight-normal ml-1 mb-5 " > <br> {{stock_count}} </h1> 
-                                </div>
-                            </div>
-                            <div class="card border-dark mb-3" style="max-width: 18rem;">
-                                <div class="card-header  ">  
-                                    <a class="text-dark " href="/negproduct_list "><h3 class="font-weight-normal ml-1 mx-auto" > Stocks Négatifs   </h3><br> </a>
-                                    
-                                </div>
-                                <div class="card-body text-dark mx-auto">
-                                    <h5>Produits: </h5>
-                                   <h1 class="font-weight-normal ml-1 mb-5" >  {{stock_neg}} </h1> 
-                                    <h5>Total stock negatif: </h5>
-                                   <h1 class="font-weight-normal ml-1 mb-5" >  {{nbstock_neg}} </h1> 
-                                </div>
-                            </div>
-                            <div class="card border-dark mb-3" style="max-width: 18rem;">
-                                <div class="card-header  ">  
-                                    <a class="text-dark " href="/reptureproduct_list "><h3 class="font-weight-normal ml-1 mx-auto" >  Produits en rupture   </h3><br> </a>
-                                    
-                                </div>
-                                <div class="card-body text-dark mx-auto">
-                                   <h1 class="font-weight-normal ml-1  mb-5" > <br>  {{repture_count}} </h1> 
-                                </div>
-                            </div>
-                        </div>
-           
+
+  
                     </div>
                 </div>
             </div>
@@ -234,11 +213,11 @@
                     <nav>
                         <ul class="footer-menu">
                             <li>
-                                <a href="#">
-                                    Home
+                                <a href="/">
+                                    eStock
                                 </a>
                             </li>
-
+                 
                         </ul>
                         
                     </nav>
