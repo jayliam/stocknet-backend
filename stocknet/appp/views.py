@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Service
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User,auth
+from django.contrib.auth import login
 from products.models import Product
 from clients.models import Client
 from suppliers.models import Supplier
+from django.contrib import messages
 
 # Create your views here.
 def home(request):
@@ -25,7 +27,73 @@ def dashboard(request):
     return render(request,"dashboard/dashboard.html",contex)
 
 def account(request):
-    return render(request,"dashboard/account.html",{})
+    if request.method == 'POST':
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        username = request.POST['username']
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+        if(password1 == password2):
+            if(request.user.username != username):
+                if(User.objects.filter(username=username).exists()):
+                    print('nom d utilisateur exist deja')
+                    messages.info(request,'nom d utilisateur exist deja')
+                else:    
+                    if not password1:
+                        request.user.username=username 
+                        request.user.first_name=first_name
+                        request.user.last_name=last_name
+                        pwd= request.user.password
+                        print(request.user.username) 
+                        request.user.save()
+                        user = auth.authenticate(username=username,password=pwd)
+                        login(request,user)                        
+                        print('user updated')
+                        return redirect('account')
+                        
+                    else:
+                        request.user.set_password(password1)
+                        request.user.username=username 
+                        request.user.first_name=first_name
+                        request.user.last_name=last_name
+                        print(request.user.username) 
+                        request.user.save()
+                        user = auth.authenticate(username=username,password=password1)
+                        login(request,user) 
+                        print('user updated')
+                        return redirect('account')
+                        
+            else :  
+                    
+                    if not password1:
+
+                        request.user.first_name=first_name
+                        request.user.last_name=last_name
+                        pwd= request.user.password
+                        usr= request.user.username
+                        print(request.user.username)                       
+                        request.user.save()
+                        user = auth.authenticate(username=usr,password=pwd)
+                        login(request,user) 
+                        print('user created')
+                        return redirect('account')
+                    else:
+                        request.user.set_password(password1) 
+                        request.user.first_name=first_name
+                        request.user.last_name=last_name
+                        usr= request.user.username
+                        print(request.user.username) 
+                        request.user.save()
+                        user = auth.authenticate(username=usr,password=password1)
+                        login(request,user) 
+                        print('user updated')
+                        return redirect('account')  
+        else:
+            print('les mots de passe ne correspondent pas')
+            messages.info(request,'les mots de passe ne correspondent pas')
+        return redirect('account')
+    else:
+        return render(request,"dashboard/account.html",{})
 
 def product_create(request):
     return render(request,"dashboard/product/product_create.html",{})
