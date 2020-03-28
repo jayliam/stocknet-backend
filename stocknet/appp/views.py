@@ -96,7 +96,15 @@ def account(request):
         return render(request,"dashboard/account.html",{})
 
 def product_create(request):
-    return render(request,"dashboard/product/product_create.html",{})
+    
+    suppliers = Supplier.objects.all()
+    list_suppliers= list(suppliers)
+    print(list_suppliers)
+    
+    context = {
+        "list_suppliers" : list_suppliers
+    }
+    return render(request,"dashboard/product/product_create.html",context)
 
 def product_list(request):
     
