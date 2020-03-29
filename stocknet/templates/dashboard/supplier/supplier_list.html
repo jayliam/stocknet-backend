@@ -168,7 +168,8 @@
                                     <th>Category</th>
                                     <th>Adress</th>
                                     <th>Note</th>
-                                    
+                                    <th>Supprimer</th>
+                                    <th>Modifier</th>                                    
                                 </thead>
                                 <tbody>
                                 {% for entry in list_suppliers %}
@@ -180,6 +181,8 @@
                                         <td>{{ entry.Category }}</td>
                                         <td>{{ entry.Adress }}</td>
                                         <td>{{ entry.Note }}</td>
+                                        <td><a class=" text-danger "  href="/supplier/{{ entry.id }}/delete">  Supprimer</a></td>
+                                        <td><a class=" text-warning  "  href="/supplier/{{ entry.id }}/edit">  Modifier</a></td>
                                         
 
                                     </tr>

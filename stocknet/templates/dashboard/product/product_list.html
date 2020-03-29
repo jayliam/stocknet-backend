@@ -177,28 +177,37 @@
                                     <th>Fournisseurs </th>
                                     <th>Categorie</th>
                                     <th>Quantité</th>
+                                    <th>Supprimer</th>
+                                    <th>Modifier</th>
+
                                 </thead>
                                 <tbody>
-                                {% with id=1 %}
+                                
                                  
                                 {% for entry in list_products %}
                                     <tr>
-                                        <td>{{ entry.Title }} {{id}}  </td>
+                                        <td>{{ entry.Title }}   </td>
                                         <td>{{ entry.PurchasePrice }}</td>
                                         <td>{{ entry.SalesPrice }}</td>
                                         <td>{{ entry.Reference }}</td>
                                         <td>{{ entry.Manufacturer }}</td>
                                         <td>{{ entry.Suppliers }}</td>
                                         <td>{{ entry.Category }}</td>
+                                        
                                         {% if entry.Quantity < 0 %}
                                             <td class=" text-danger " > {{ entry.Quantity }}</td>
                                         {% endif %}
                                         {% if entry.Quantity > 0 %}
                                             <td class=" text-success " > {{ entry.Quantity }}</td>
                                         {% endif %}
+                                        {% if entry.Quantity == 0 %}
+                                            <td class=" text-warning " > 0</td>
+                                        {% endif %}
+                                        <td><a class=" text-danger "  href="/product/{{ entry.id }}/delete">  Supprimer</a></td>
+                                        <td><a class=" text-warning  "  href="/product/{{ entry.id }}/edit">  Modifier</a></td>
                                     </tr>
                                 {% endfor %} 
-                                {% endwith %} 
+                                
                                 </tbody>
                             </table>
                          
