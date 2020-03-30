@@ -16,12 +16,13 @@ def home(request):
         return render(request,"index.html",{})
 
 def dashboard(request):
-    Pcount= request.user.productlist.all().count()
-    Ccount= Client.objects.all().count()
-    Scount= Supplier.objects.all().count()
 
-    products = Product.objects.all()
-    list_products= list(products)
+    Pcount= request.user.productlist.all().count()
+    Ccount= request.user.clientlist.all().count()
+    Scount= request.user.supplierlist.all().count()
+
+    
+    list_products= request.user.productlist.all()
     repture_count=0
     stock_count=0
     stock_neg=0
@@ -108,9 +109,9 @@ def account(request):
 
         return redirect('account')
     else:
-        Pcount= Product.objects.all().count()
-        Ccount= Client.objects.all().count()
-        Scount= Supplier.objects.all().count()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
         context= {
         "Pcount": Pcount,
         "Ccount": Ccount,
@@ -176,12 +177,11 @@ def product_create(request):
         return redirect('product_list')
 
     else:
-        Pcount= Product.objects.all().count()
-        Ccount= Client.objects.all().count()
-        Scount= Supplier.objects.all().count() 
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
 
-        suppliers = Supplier.objects.all()
-        list_suppliers= list(suppliers)
+        list_suppliers= request.user.supplierlist.all()
         
         
         context = {
@@ -194,11 +194,10 @@ def product_create(request):
 
 def product_edit(request, id):
     obj = get_object_or_404(Product, id=id)
-    Pcount= Product.objects.all().count()
-    Ccount= Client.objects.all().count()
-    Scount= Supplier.objects.all().count() 
-    suppliers = Supplier.objects.all()
-    list_suppliers= list(suppliers)
+    Pcount= request.user.productlist.all().count()
+    Ccount= request.user.clientlist.all().count()
+    Scount= request.user.supplierlist.all().count()    
+    list_suppliers= request.user.supplierlist.all()
     list_suppliers_obj=[]
     for s in obj.Suppliers:
         list_suppliers_obj.append(s)
@@ -272,13 +271,13 @@ def product_edit(request, id):
         return render(request,"dashboard/product/product_edit.html",context)
 
 def product_list(request):
+        
+    list_products= request.user.productlist.all()
     
-    products = Product.objects.all()
-    list_products= list(products)
+    Pcount= request.user.productlist.all().count()
+    Ccount= request.user.clientlist.all().count()
+    Scount= request.user.supplierlist.all().count()
 
-    Pcount= Product.objects.all().count()
-    Ccount= Client.objects.all().count()
-    Scount= Supplier.objects.all().count()
     context= {
     "Pcount": Pcount,
     "Ccount": Ccount,
@@ -295,11 +294,11 @@ def product_delete(request, id):
         obj.delete()
         return redirect('product_list')
     else:    
-        products = Product.objects.all()
-        list_products= list(products)
-        Pcount= Product.objects.all().count()
-        Ccount= Client.objects.all().count()
-        Scount= Supplier.objects.all().count()
+        
+        list_products= request.user.productlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count() 
         context= {
             "obj":obj,
             "Pcount": Pcount,
@@ -312,13 +311,12 @@ def product_delete(request, id):
 
 def reptureproduct_list(request):
     
-    products = Product.objects.all()
-    list_products= list(products)
+    
+    list_products= request.user.productlist.all()
    
-    Pcount= Product.objects.all().count()
-    Ccount= Client.objects.all().count()
-    Scount= Supplier.objects.all().count()
-
+    Pcount= request.user.productlist.all().count()
+    Ccount= request.user.clientlist.all().count()
+    Scount= request.user.supplierlist.all().count()
 
     context= {
     "Pcount": Pcount,
@@ -330,12 +328,12 @@ def reptureproduct_list(request):
     return render(request,"dashboard/product/reptureroduct_list.html",context)
 def negproduct_list(request):
     
-    products = Product.objects.all()
-    list_products= list(products)
     
-    Pcount= Product.objects.all().count()
-    Ccount= Client.objects.all().count()
-    Scount= Supplier.objects.all().count()
+    list_products= request.user.productlist.all()
+    
+    Pcount= request.user.productlist.all().count()
+    Ccount= request.user.clientlist.all().count()
+    Scount= request.user.supplierlist.all().count()
 
 
     context= {
@@ -388,9 +386,9 @@ def client_create(request):
         return redirect('client_list')
 
     else:
-        Pcount= Product.objects.all().count()
-        Ccount= Client.objects.all().count()
-        Scount= Supplier.objects.all().count()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
         context= {
         "Pcount": Pcount,
         "Ccount": Ccount,
@@ -399,9 +397,9 @@ def client_create(request):
         return render(request,"dashboard/client/client_create.html",context)
 def client_edit(request,id):
     obj = get_object_or_404(Client, id=id)
-    Pcount= Product.objects.all().count()
-    Ccount= Client.objects.all().count()
-    Scount= Supplier.objects.all().count()
+    Pcount= request.user.productlist.all().count()
+    Ccount= request.user.clientlist.all().count()
+    Scount= request.user.supplierlist.all().count()
     context= {
     "Pcount": Pcount,
     "Ccount": Ccount,
@@ -452,14 +450,15 @@ def client_edit(request,id):
         return render(request,"dashboard/client/client_edit.html",context)
 
 def client_list(request):
-    clients = Client.objects.all()
-    list_clients= list(clients)
+    
+    
+    list_clients= request.user.clientlist.all()
     
     
 
-    Pcount= Product.objects.all().count()
-    Ccount= Client.objects.all().count()
-    Scount= Supplier.objects.all().count()
+    Pcount= request.user.productlist.all().count()
+    Ccount= request.user.clientlist.all().count()
+    Scount= request.user.supplierlist.all().count()
     context= {
     "Pcount": Pcount,
     "Ccount": Ccount,
@@ -475,11 +474,11 @@ def client_delete(request, id):
         obj.delete()
         return redirect('client_list')
     else:
-        clients = Client.objects.all()
-        list_clients= list(clients)
-        Pcount= Product.objects.all().count()
-        Ccount= Client.objects.all().count()
-        Scount= Supplier.objects.all().count()
+       
+        list_clients= request.user.clientlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
         context= {
         "obj":obj,
         "Pcount": Pcount,
@@ -517,7 +516,7 @@ def supplier_create(request):
             error=True
 
         if error:
-            return redirect('client_create')
+            return redirect('supplier_create')
 
         supplier = Supplier(
             Type = Type,
@@ -534,9 +533,9 @@ def supplier_create(request):
         return redirect('supplier_list')
 
     else:
-        Pcount= Product.objects.all().count()
-        Ccount= Client.objects.all().count()
-        Scount= Supplier.objects.all().count()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
         context= {
         "Pcount": Pcount,
         "Ccount": Ccount,
@@ -545,9 +544,9 @@ def supplier_create(request):
         return render(request,"dashboard/supplier/supplier_create.html",context)
 def supplier_edit(request,id=id):
     obj = get_object_or_404(Supplier, id=id)
-    Pcount= Product.objects.all().count()
-    Ccount= Client.objects.all().count()
-    Scount= Supplier.objects.all().count()
+    Pcount= request.user.productlist.all().count()
+    Ccount= request.user.clientlist.all().count()
+    Scount= request.user.supplierlist.all().count()
     context= {
     "Pcount": Pcount,
     "Ccount": Ccount,
@@ -602,11 +601,11 @@ def supplier_edit(request,id=id):
         return render(request,"dashboard/supplier/supplier_edit.html",context)
 
 def supplier_list(request):
-    Pcount= Product.objects.all().count()
-    Ccount= Client.objects.all().count()
-    Scount= Supplier.objects.all().count()
-    suppliers = Supplier.objects.all()
-    list_suppliers= list(suppliers)
+    Pcount= request.user.productlist.all().count()
+    Ccount= request.user.clientlist.all().count()
+    Scount= request.user.supplierlist.all().count()
+    
+    list_suppliers= request.user.supplierlist.all()
     context= {
     "Pcount": Pcount,
     "Ccount": Ccount,
@@ -622,11 +621,11 @@ def supplier_delete(request,id=id):
         obj.delete()
         return redirect('supplier_list')    
 
-    Pcount= Product.objects.all().count()
-    Ccount= Client.objects.all().count()
-    Scount= Supplier.objects.all().count()
+    Pcount= request.user.productlist.all().count()
+    Ccount= request.user.clientlist.all().count()
+    Scount= request.user.supplierlist.all().count()
     suppliers = Supplier.objects.all()
-    list_suppliers= list(suppliers)
+    list_suppliers= request.user.suppliertlist.all()
     context= {
     "obj":obj,
     "Pcount": Pcount,

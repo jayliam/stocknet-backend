@@ -172,7 +172,7 @@
                                     <th>Modifier</th>                                    
                                 </thead>
                                 <tbody>
-                                {% for entry in list_suppliers %}
+                                {% for entry in user.supplierlist.all %}
                                     <tr>
                                         <td>{{ entry.Type }}</td>
                                         <td>{{ entry.Name }}</td>
