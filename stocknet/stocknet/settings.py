@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'suppliers',
     'phone_field',
     'multiselectfield',
+    'SS',
 ]
 
 MIDDLEWARE = [
@@ -82,7 +83,7 @@ WSGI_APPLICATION = 'stocknet.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "stocknet",
+        'NAME': "PS",
         'USER': 'postgres',
         'PASSWORD' : '1234',
         'HOST' : 'localhost'

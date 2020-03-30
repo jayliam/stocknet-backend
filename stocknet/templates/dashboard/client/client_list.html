@@ -176,7 +176,7 @@
                                     
                                 </thead>
                                 <tbody>
-                                {% for entry in list_clients %}
+                                {% for entry in user.clientlist.all %}
                                     <tr>
                                         <td>{{ entry.Type }}</td>
                                         <td>{{ entry.Name }}</td>

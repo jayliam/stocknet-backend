@@ -1,7 +1,7 @@
 from django.db import models
 from phone_field import PhoneField
 from multiselectfield import MultiSelectField
-
+from django.contrib.auth.models import User
 TYPE_CHOICES  = (('Particulier', 'Particulier'),
                ('Entreprise', 'Entreprise'),
                )
@@ -15,6 +15,6 @@ class Client(models.Model):
     Reference     = models.CharField(max_length=100)
     Adress        = models.CharField(max_length=100)
     Note          = models.TextField(blank=True, null=True)
-    
+    user          = models.ForeignKey(User, on_delete=models.CASCADE, related_name="clientlist", null=True) # <--- added    
     
     

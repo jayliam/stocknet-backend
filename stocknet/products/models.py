@@ -1,7 +1,7 @@
 from django.db import models
 from suppliers.models import Supplier
 from multiselectfield import MultiSelectField
-
+from django.contrib.auth.models import User
 #THIS SHOULD BE IN VIEW SO THAT IT RELOADS WHEN ADDING NEW SUPPLIERS
 #THIS
 S_CHOICES=()
@@ -20,4 +20,4 @@ class Product(models.Model):
     Suppliers     = MultiSelectField(choices=S_CHOICES)
     Category      = models.CharField(max_length=100)
     Quantity      = models.DecimalField(decimal_places=2, max_digits=20, default=0, null=True)
-    
+    user          = models.ForeignKey(User, on_delete=models.CASCADE, related_name="productlist", null=True) # <--- added

@@ -16,7 +16,7 @@ def home(request):
         return render(request,"index.html",{})
 
 def dashboard(request):
-    Pcount= Product.objects.all().count()
+    Pcount= request.user.productlist.all().count()
     Ccount= Client.objects.all().count()
     Scount= Supplier.objects.all().count()
 
@@ -56,7 +56,7 @@ def account(request):
         if(password1 == password2):
             if(request.user.username != username):
                 if(User.objects.filter(username=username).exists()):
-                    print('nom d utilisateur exist deja')
+                    
                     messages.info(request,'nom d utilisateur exist deja')
                 else:    
                     if not password1:
@@ -64,11 +64,11 @@ def account(request):
                         request.user.first_name=first_name
                         request.user.last_name=last_name
                         pwd= request.user.password
-                        print(request.user.username) 
+                         
                         request.user.save()
                         user = auth.authenticate(username=username,password=pwd)
                         login(request,user)                        
-                        print('user updated')
+                        
                         return redirect('account')
                         
                     else:
@@ -76,11 +76,9 @@ def account(request):
                         request.user.username=username 
                         request.user.first_name=first_name
                         request.user.last_name=last_name
-                        print(request.user.username) 
                         request.user.save()
                         user = auth.authenticate(username=username,password=password1)
                         login(request,user) 
-                        print('user updated')
                         return redirect('account')
                         
             else :  
@@ -91,26 +89,21 @@ def account(request):
                         request.user.last_name=last_name
                         pwd= request.user.password
                         usr= request.user.username
-                        print(request.user.username)                       
                         request.user.save()
                         user = auth.authenticate(username=usr,password=pwd)
                         login(request,user) 
-                        print('user created')
                         return redirect('account')
                     else:
                         request.user.set_password(password1) 
                         request.user.first_name=first_name
                         request.user.last_name=last_name
                         usr= request.user.username
-                        print(request.user.username) 
                         request.user.save()
                         user = auth.authenticate(username=usr,password=password1)
                         login(request,user) 
-                        print('user updated')
                         return redirect('account')
               
         else:
-            print('les mots de passe ne correspondent pas')
             messages.info(request,'les mots de passe ne correspondent pas')
 
         return redirect('account')
@@ -178,6 +171,7 @@ def product_create(request):
             Quantity = quantity
         )
         product.save()
+        request.user.productlist.add(product)
         messages.info(request,'Produit Ajouté')
         return redirect('product_list')
 
@@ -208,7 +202,6 @@ def product_edit(request, id):
     list_suppliers_obj=[]
     for s in obj.Suppliers:
         list_suppliers_obj.append(s)
-    print(list_suppliers_obj)
     
     context = {
         "list_suppliers" : list_suppliers,
@@ -321,7 +314,7 @@ def reptureproduct_list(request):
     
     products = Product.objects.all()
     list_products= list(products)
-    print(list_products)
+   
     Pcount= Product.objects.all().count()
     Ccount= Client.objects.all().count()
     Scount= Supplier.objects.all().count()
@@ -339,7 +332,7 @@ def negproduct_list(request):
     
     products = Product.objects.all()
     list_products= list(products)
-    print(list_products)
+    
     Pcount= Product.objects.all().count()
     Ccount= Client.objects.all().count()
     Scount= Supplier.objects.all().count()
@@ -391,6 +384,7 @@ def client_create(request):
         )
         client.save()
         messages.info(request,'Client Ajouté')
+        request.user.clientlist.add(client)
         return redirect('client_list')
 
     else:
@@ -460,7 +454,7 @@ def client_edit(request,id):
 def client_list(request):
     clients = Client.objects.all()
     list_clients= list(clients)
-    print(list_clients)
+    
     
 
     Pcount= Product.objects.all().count()
@@ -535,6 +529,7 @@ def supplier_create(request):
             Note = Note
         )
         supplier.save()
+        request.user.supplierlist.add(supplier)  
         messages.info(request,'Fournisseur Ajouté')
         return redirect('supplier_list')
 

@@ -184,7 +184,7 @@
                                 <tbody>
                                 
                                  
-                                {% for entry in list_products %}
+                                {% for entry in user.productlist.all %}
                                     <tr>
                                         <td>{{ entry.Title }}   </td>
                                         <td>{{ entry.PurchasePrice }}</td>
