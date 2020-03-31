@@ -130,7 +130,7 @@ def product_create(request):
         suppliers = request.POST.getlist('suppliers')
         category = request.POST['category']
         quantity = request.POST['quantity']
-
+        print(suppliers)
         error= False
         if not title : 
             messages.info(request,'Le champ titre ne peut pas etre vide')
@@ -172,6 +172,7 @@ def product_create(request):
             Quantity = quantity
         )
         product.save()
+        #product.Suppliers.set(suppliers)
         request.user.productlist.add(product)
         messages.info(request,'Produit Ajouté')
         return redirect('product_list')
@@ -271,21 +272,30 @@ def product_edit(request, id):
         return render(request,"dashboard/product/product_edit.html",context)
 
 def product_list(request):
-        
-    list_products= request.user.productlist.all()
-    
-    Pcount= request.user.productlist.all().count()
-    Ccount= request.user.clientlist.all().count()
-    Scount= request.user.supplierlist.all().count()
 
-    context= {
-    "Pcount": Pcount,
-    "Ccount": Ccount,
-    "Scount": Scount,
-    "list_products" : list_products
-    }
+    if request.method == 'POST':
+        selectedlist = request.POST.getlist('selectedlist')
 
-    return render(request,"dashboard/product/product_list.html",context)
+        for i in selectedlist:
+            #obj=get_object_or_404(Product, id=int(i))
+            obj = Product.objects.get(id=int(i))
+            obj.delete() 
+        return redirect('product_list')      
+
+    else:
+        list_products= request.user.productlist.all()    
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+
+        context= {
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount,
+        "list_products" : list_products
+        }
+
+        return render(request,"dashboard/product/product_list.html",context)
 
 
 def product_delete(request, id):
@@ -450,22 +460,27 @@ def client_edit(request,id):
         return render(request,"dashboard/client/client_edit.html",context)
 
 def client_list(request):
-    
-    
-    list_clients= request.user.clientlist.all()
-    
-    
+    if request.method == 'POST':
+        selectedlist = request.POST.getlist('selectedlist')
 
-    Pcount= request.user.productlist.all().count()
-    Ccount= request.user.clientlist.all().count()
-    Scount= request.user.supplierlist.all().count()
-    context= {
-    "Pcount": Pcount,
-    "Ccount": Ccount,
-    "Scount": Scount,
-    "list_clients" : list_clients
-    }
-    return render(request,"dashboard/client/client_list.html",context)
+        for i in selectedlist:
+            #obj=get_object_or_404(Product, id=int(i))
+            obj = Client.objects.get(id=int(i))
+            obj.delete() 
+        return redirect('client_list')      
+
+    else:
+        list_clients= request.user.clientlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount,
+        "list_clients" : list_clients
+        }
+        return render(request,"dashboard/client/client_list.html",context)
 def client_delete(request, id):
     obj=get_object_or_404(Client, id=id)
 
@@ -601,20 +616,26 @@ def supplier_edit(request,id=id):
         return render(request,"dashboard/supplier/supplier_edit.html",context)
 
 def supplier_list(request):
-    Pcount= request.user.productlist.all().count()
-    Ccount= request.user.clientlist.all().count()
-    Scount= request.user.supplierlist.all().count()
-    
-    list_suppliers= request.user.supplierlist.all()
-    context= {
-    "Pcount": Pcount,
-    "Ccount": Ccount,
-    "Scount": Scount,
-    "list_suppliers" : list_suppliers
-    }
+    if request.method == 'POST':
+        selectedlist = request.POST.getlist('selectedlist')
 
-
-    return render(request,"dashboard/supplier/supplier_list.html",context)
+        for i in selectedlist:
+            #obj=get_object_or_404(Product, id=int(i))
+            obj = Supplier.objects.get(id=int(i))
+            obj.delete() 
+        return redirect('supplier_list')      
+    else:
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        list_suppliers= request.user.supplierlist.all()
+        context= {
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount,
+        "list_suppliers" : list_suppliers
+        }
+        return render(request,"dashboard/supplier/supplier_list.html",context)
 def supplier_delete(request,id=id):
     obj=get_object_or_404(Supplier, id=id)
     if request.method == "POST":

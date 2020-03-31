@@ -164,6 +164,7 @@
                             </div> 
                             <table class="table table-hover table-striped">
                                 <thead>
+                                    <th>Select</th>
                                     <th>Type</th>
                                     <th>Name</th>
                                     <th>Phone</th>
@@ -176,8 +177,14 @@
                                     
                                 </thead>
                                 <tbody>
+                                <form  method="POST"> {% csrf_token %}
                                 {% for entry in user.clientlist.all %}
                                     <tr>
+                                        <td>                                         
+                                            <input type="checkbox" id="selectedlist" name="selectedlist" value="{{entry.id}}">
+                                            <label  for="selectedlist">  </label><br>                                             
+                                        </td>
+                                        <td>{{ entry.Type }}</td>
                                         <td>{{ entry.Type }}</td>
                                         <td>{{ entry.Name }}</td>
                                         <td>{{ entry.Phone }}</td>
@@ -189,7 +196,9 @@
                                         <td><a class=" text-warning  "  href="/client/{{ entry.id }}/edit">  Modifier</a></td>
 
                                     </tr>
-                                {% endfor %}     
+                                {% endfor %}
+                                <button type="submit" class="btn btn-danger  ">Supprimer  </button> 
+                                </form>     
                                 </tbody>
                             </table>
                 

@@ -8,7 +8,7 @@ S_CHOICES=()
 for s in Supplier.objects.all():
     S_CHOICES =  ((s.Name,s.Name),) + S_CHOICES 
 #THIS
-
+#S_CHOICES=[]
 
 class Product(models.Model):
     Title         = models.CharField(max_length=100)
