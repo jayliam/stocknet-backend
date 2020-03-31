@@ -38,14 +38,14 @@
                 </div>
                 <ul class="nav"> 
 
-                    <li class="nav-item ">
+                    <li class="nav-item {% block accountactive %}  {% endblock %} ">
                         <a class="nav-link" href="/account">
                             <i class="nc-icon fa fa-user-circle-o"></i>
                             <p>Mon compte</p>
                         </a>
                     </li>
 
-                    <li class="nav-item active">
+                    <li class="nav-item {% block deactive %} active {% endblock %}">
                         <a class="nav-link" href="/dashboard">
                             <i class="nc-icon fa fa-line-chart nc-paper-2"></i>
                             <p>Tableau de bord</p>
@@ -53,7 +53,7 @@
                     </li>
 
 
-                    <li class=" dropdown nav-item ">
+                    <li class=" dropdown nav-item {% block productactive %}  {% endblock %} ">
                         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="nc-icon nc-icon fa fa-cubes"></i>
                             <p>Produits : {{Pcount}}</p>   
@@ -65,7 +65,7 @@
                         </div>
                      </li>
 
-                    <li class=" dropdown nav-item ">
+                    <li class=" dropdown nav-item {% block activeclient %}  {% endblock %} ">
                         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="nc-icon nc-icon fa fa-users"></i>
                             <p>Clients : {{Ccount}}</p>   
@@ -77,7 +77,7 @@
                         </div>
                      </li>
 
-                    <li class=" dropdown nav-item ">
+                    <li class=" dropdown nav-item {% block activesupplier %}  {% endblock %} ">
                         <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="nc-icon nc-icon fa fa-truck"></i>
                             <p>Fournisseurs : {{Scount}}</p>   
@@ -112,17 +112,22 @@
                             <li class="dropdown nav-item">
                                 <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
                                     <i class="nc-icon nc-planet"></i>
-                                    <span class="notification">5</span>
+                                    {% if notif %}
+                                    <span class="notification"></span>
+                                    {% endif %}
                                     <span class="d-lg-none">Notification</span>
                                 </a>
                                 
     
                                 <ul class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">Notification 1</a>
-                                    <a class="dropdown-item" href="#">Notification 2</a>
-                                    <a class="dropdown-item" href="#">Notification 3</a>
-                                    <a class="dropdown-item" href="#">Notification 4</a>
-                                    <a class="dropdown-item" href="#">Another notification</a>
+                                    {% if repture_count > 0 %}
+                                    <a class="dropdown-item" href="/reptureproduct_list">Vous avez {{repture_count}} produits en repture de stock</a>
+                                    {% endif %}
+                                    {% if nbstock_neg < 0 %} 
+                                    <a class="dropdown-item" href="/negproduct_list">Vous avez {{stock_neg}}  produits en stock negatif</a>
+                                    <a class="dropdown-item" href="/negproduct_list">Vous avez un stock negatif de :  {{nbstock_neg}} </a>
+                                    {% endif %}
+
                                 </ul>
                             </li>
 
@@ -141,6 +146,7 @@
             </nav>
             <!-- End Navbar -->
             <div class="content">
+            {% block content %}
                 <div class="container-fluid">
                     <div class="section">
                         
@@ -229,6 +235,7 @@
            
                     </div>
                 </div>
+            {% endblock %}
             </div>
             <footer class="footer">
                 <div class="container-fluid">

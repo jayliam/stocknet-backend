@@ -8,7 +8,28 @@ from clients.models import Client
 from suppliers.models import Supplier
 from django.contrib import messages
 
-# Create your views here.
+def info(request):
+    list_products= request.user.productlist.all()
+    repture_count=0
+    stock_neg=0
+    nbstock_neg=0
+    notif=False
+    for entry in list_products:
+        if entry.Quantity == 0:
+            repture_count=repture_count+ 1
+        if entry.Quantity<0 :
+            stock_neg=stock_neg+1
+            nbstock_neg=nbstock_neg+entry.Quantity
+    if ((repture_count > 0) or (nbstock_neg < 0)):
+        notif=True
+    context= {
+        "stock_neg": stock_neg,
+        "notif": notif,
+        "repture_count": repture_count,
+        "nbstock_neg": int(nbstock_neg)
+    }
+    return(context)
+
 def home(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
@@ -27,6 +48,7 @@ def dashboard(request):
     stock_count=0
     stock_neg=0
     nbstock_neg=0
+    notif=False
     for entry in list_products:
         if entry.Quantity>0:
             stock_count=stock_count+ entry.Quantity
@@ -35,17 +57,20 @@ def dashboard(request):
         if entry.Quantity<0 :
             stock_neg=stock_neg+1
             nbstock_neg=nbstock_neg+entry.Quantity
-
-    contex= {
+    if ((repture_count > 0) or (nbstock_neg < 0)):
+        notif=True
+    context= {
         "Pcount": Pcount,
         "Ccount": Ccount,
         "Scount": Scount,
         "stock_count": int(stock_count),
         "stock_neg": stock_neg,
+        "notif": notif,
         "repture_count": repture_count,
         "nbstock_neg": int(nbstock_neg)
     }
-    return render(request,"dashboard/dashboard.html",contex)
+    context.update(info(request))
+    return render(request,"dashboard/dashboard.html",context)
 
 def account(request):
     if request.method == 'POST':
@@ -116,8 +141,10 @@ def account(request):
         "Pcount": Pcount,
         "Ccount": Ccount,
         "Scount": Scount
-    }
+        }
+        context.update(info(request))
         return render(request,"dashboard/account.html",context)
+    
 
 def product_create(request):
     if request.method == 'POST':
@@ -191,6 +218,7 @@ def product_create(request):
             "Ccount": Ccount,
             "Scount": Scount
         }
+        context.update(info(request))
         return render(request,"dashboard/product/product_create.html",context)
 
 def product_edit(request, id):
@@ -212,7 +240,7 @@ def product_edit(request, id):
         
         "obj":obj
     }
-
+    context.update(info(request))
 
     if request.method == 'POST':
         title = request.POST['title']
@@ -251,6 +279,7 @@ def product_edit(request, id):
             messages.info(request,'Le champ Fournisseurs  ne peut pas etre vide')
             error=True
         if error:
+            context.update(info(request))
             return render(request,"dashboard/product/product_edit.html",context)
 
         obj.Title = title
@@ -268,7 +297,7 @@ def product_edit(request, id):
         return redirect('product_list')
 
     else:
-
+        context.update(info(request))
         return render(request,"dashboard/product/product_edit.html",context)
 
 def product_list(request):
@@ -288,13 +317,14 @@ def product_list(request):
         Ccount= request.user.clientlist.all().count()
         Scount= request.user.supplierlist.all().count()
 
+
         context= {
         "Pcount": Pcount,
         "Ccount": Ccount,
         "Scount": Scount,
         "list_products" : list_products
         }
-
+        context.update(info(request))
         return render(request,"dashboard/product/product_list.html",context)
 
 
@@ -316,6 +346,7 @@ def product_delete(request, id):
             "Scount": Scount,
             "list_products" : list_products
         }
+        context.update(info(request))
         return render(request,"dashboard/product/product_delete.html",context)
 
 
@@ -334,7 +365,7 @@ def reptureproduct_list(request):
     "Scount": Scount,
     "list_products" : list_products
     }
-
+    context.update(info(request))
     return render(request,"dashboard/product/reptureroduct_list.html",context)
 def negproduct_list(request):
     
@@ -352,7 +383,7 @@ def negproduct_list(request):
     "Scount": Scount,
     "list_products" : list_products
     }
-
+    context.update(info(request))
     return render(request,"dashboard/product/negproduct_list.html",context)
 
 def client_create(request):
@@ -404,6 +435,7 @@ def client_create(request):
         "Ccount": Ccount,
         "Scount": Scount
     }
+        context.update(info(request))
         return render(request,"dashboard/client/client_create.html",context)
 def client_edit(request,id):
     obj = get_object_or_404(Client, id=id)
@@ -440,6 +472,7 @@ def client_edit(request,id):
             messages.info(request,'Le champ Reference ne peut pas etre vide')
             error=True
         if error:
+            context.update(info(request))
             return render(request,"dashboard/client/client_edit.html",context)
 
         
@@ -456,7 +489,7 @@ def client_edit(request,id):
         return redirect('client_list')
 
     else:
-    
+        context.update(info(request))
         return render(request,"dashboard/client/client_edit.html",context)
 
 def client_list(request):
@@ -480,6 +513,7 @@ def client_list(request):
         "Scount": Scount,
         "list_clients" : list_clients
         }
+        context.update(info(request))
         return render(request,"dashboard/client/client_list.html",context)
 def client_delete(request, id):
     obj=get_object_or_404(Client, id=id)
@@ -501,6 +535,7 @@ def client_delete(request, id):
         "Scount": Scount,
         "list_clients" : list_clients
         }
+        context.update(info(request))
         return render(request,"dashboard/client/client_delete.html",context)
 
 def supplier_create(request):
@@ -556,6 +591,7 @@ def supplier_create(request):
         "Ccount": Ccount,
         "Scount": Scount
     }
+        context.update(info(request))
         return render(request,"dashboard/supplier/supplier_create.html",context)
 def supplier_edit(request,id=id):
     obj = get_object_or_404(Supplier, id=id)
@@ -596,6 +632,7 @@ def supplier_edit(request,id=id):
             error=True
 
         if error:
+            context.update(info(request))
             return render(request,"dashboard/supplier/supplier_edit.html",context)
 
 
@@ -612,7 +649,7 @@ def supplier_edit(request,id=id):
         return redirect('supplier_list')
 
     else:
-        
+        context.update(info(request))
         return render(request,"dashboard/supplier/supplier_edit.html",context)
 
 def supplier_list(request):
@@ -635,6 +672,7 @@ def supplier_list(request):
         "Scount": Scount,
         "list_suppliers" : list_suppliers
         }
+        context.update(info(request))
         return render(request,"dashboard/supplier/supplier_list.html",context)
 def supplier_delete(request,id=id):
     obj=get_object_or_404(Supplier, id=id)
@@ -646,7 +684,7 @@ def supplier_delete(request,id=id):
     Ccount= request.user.clientlist.all().count()
     Scount= request.user.supplierlist.all().count()
     suppliers = Supplier.objects.all()
-    list_suppliers= request.user.suppliertlist.all()
+    list_suppliers= request.user.supplierlist.all()
     context= {
     "obj":obj,
     "Pcount": Pcount,
@@ -655,7 +693,7 @@ def supplier_delete(request,id=id):
     "list_suppliers" : list_suppliers
     }
 
-    
+    context.update(info(request))
     return render(request,"dashboard/supplier/supplier_delete.html",context)
 
 def contact(request):
