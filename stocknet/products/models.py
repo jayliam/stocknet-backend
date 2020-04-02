@@ -17,9 +17,11 @@ class Product(models.Model):
     SalesPrice    = models.DecimalField(decimal_places=2, max_digits=20,default=0,null=True)
     Reference     = models.CharField(max_length=100)
     Manufacturer  = models.CharField(max_length=100)
-    #Suppliers     = models.ManyToManyField(Supplier)
+    #Suppliers    = models.ManyToManyField(Supplier)
     Suppliers     = MultiSelectField(choices=S_CHOICES)
     Category      = models.CharField(max_length=100)
     Quantity      = models.DecimalField(decimal_places=2, max_digits=20, default=0, null=True)
     user          = models.ForeignKey(User, on_delete=models.CASCADE, related_name="productlist", null=True) # <--- added
     
+    def __str__(self):
+        return self.Title    
