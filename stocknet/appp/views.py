@@ -157,7 +157,6 @@ def product_create(request):
         suppliers = request.POST.getlist('suppliers')
         category = request.POST['category']
         quantity = request.POST['quantity']
-        print(suppliers)
         error= False
         if not title : 
             messages.info(request,'Le champ titre ne peut pas etre vide')
@@ -194,11 +193,15 @@ def product_create(request):
             SalesPrice = salesprice,
             Reference = reference,
             Manufacturer = manufacturer,
-            Suppliers = suppliers,
+            #Suppliers = suppliers,
             Category = category,
             Quantity = quantity
         )
         product.save()
+        for s in suppliers:
+            Sobj=Supplier.objects.get(Name=s)
+            Sobj.save()
+            product.Suppliers.add(Sobj)
         #product.Suppliers.set(suppliers)
         request.user.productlist.add(product)
         messages.info(request,'Produit Ajouté')

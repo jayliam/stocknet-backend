@@ -51,7 +51,11 @@
                         <td>{{ entry.SalesPrice }}</td>
                         <td>{{ entry.Reference }}</td>
                         <td>{{ entry.Manufacturer }}</td>
-                        <td>{{ entry.Suppliers }}</td>
+                        <td>
+                            {% for s in entry.Suppliers.all %}    
+                                {{ s.Name }}
+                            {% endfor %}
+                        </td>
                         <td>{{ entry.Category }}</td>
                         
                             <td class=" text-danger " > {{ entry.Quantity }}</td>
