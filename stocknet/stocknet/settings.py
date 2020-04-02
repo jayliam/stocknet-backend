@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'products',
     'clients',
+    'orders',
     'suppliers',
     'phone_field',
     'multiselectfield',
