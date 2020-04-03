@@ -138,6 +138,9 @@
                                     <a class="dropdown-item" href="/negproduct_list">Vous avez {{stock_neg}}  produits en stock negatif</a>
                                     <a class="dropdown-item" href="/negproduct_list">Vous avez un stock negatif de :  {{nbstock_neg}} </a>
                                     {% endif %}
+                                    {% if PendingOrdersCount > 0 %}
+                                    <a class="dropdown-item" href="/PendingOrders_list">Vous avez {{PendingOrdersCount}} commandes en attente</a>
+                                    {% endif %}
 
                                 </ul>
                             </li>

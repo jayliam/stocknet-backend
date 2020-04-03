@@ -26,6 +26,7 @@ urlpatterns=[
     path('order_client_create/',views.order_client_create,name='order_client_create'),
     path('order_supplier_create/',views.order_supplier_create,name='order_supplier_create'),
     path('order_supplier_list/',views.order_supplier_list,name='order_supplier_list'),
+    path('PendingOrders_list/',views.PendingOrders_list,name='PendingOrders_list'),
     path('ordersupplier/<int:id>/edit/',views.order_supplier_edit,name='order_supplier_edit'),
     path('orderclient/<int:id>/edit/',views.order_client_edit,name='order_client_edit'),
     path('orderclient/<int:id>/delete/',views.order_client_delete,name='order_client_delete'),

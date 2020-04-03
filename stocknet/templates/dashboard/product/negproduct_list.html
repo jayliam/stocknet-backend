@@ -39,6 +39,8 @@
                     <th>Fournisseurs </th>
                     <th>Categorie</th>
                     <th>Quantité</th>
+                    <th>Supprimer</th>
+                    <th>Modifier</th>
                 </thead>
                 <tbody>
                 
@@ -59,6 +61,9 @@
                         <td>{{ entry.Category }}</td>
                         
                             <td class=" text-danger " > {{ entry.Quantity }}</td>
+                        <td><a class=" text-danger "  href="/product/{{ entry.id }}/delete">  Supprimer</a></td>
+                        <td><a class=" text-warning  "  href="/product/{{ entry.id }}/edit">  Modifier</a></td>
+
                         
 
                     </tr>

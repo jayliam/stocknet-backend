@@ -12,6 +12,13 @@ from django.contrib import messages
 def info(request):
     Ocount= request.user.clientorderlist.all().count()+request.user.supplierorderlist.all().count()
     list_products= request.user.productlist.all()
+    OScount= request.user.supplierorderlist.all().count()
+    OCcount= request.user.clientorderlist.all().count()
+
+    OSPcount=list_order_suppliers= request.user.supplierorderlist.filter(Status='en attente').count()
+    OCPcount=list_order_clients= request.user.clientorderlist.filter(Status='en attente').count()
+    
+    PendingOrdersCount=OCPcount + OSPcount
     repture_count=0
     stock_neg=0
     nbstock_neg=0
@@ -27,6 +34,9 @@ def info(request):
     context= {
         "stock_neg": stock_neg,
         "notif": notif,
+        "OScount": OScount,
+        "OCcount": OCcount,
+        "PendingOrdersCount": PendingOrdersCount,
         "repture_count": repture_count,
         "Ocount": Ocount,
         "nbstock_neg": int(nbstock_neg)
@@ -44,10 +54,7 @@ def dashboard(request):
     Pcount= request.user.productlist.all().count()
     Ccount= request.user.clientlist.all().count()
     Scount= request.user.supplierlist.all().count()
-    OScount= request.user.supplierorderlist.all().count()
-    OCcount= request.user.clientorderlist.all().count()
-    
-    PendingOrdersCount=OScount + OCcount
+
     
     list_products= request.user.productlist.all()
     repture_count=0
@@ -69,9 +76,6 @@ def dashboard(request):
         "Pcount": Pcount,
         "Ccount": Ccount,
         "Scount": Scount,
-        "OScount": OScount,
-        "OCcount": OCcount,
-        "PendingOrdersCount": PendingOrdersCount,
         "stock_count": int(stock_count),
         "stock_neg": stock_neg,
         "notif": notif,
@@ -718,7 +722,51 @@ def supplier_delete(request,id=id):
 
 
 
+def PendingOrders_list(request):
+    if request.method == 'POST':
+        selectedlist = request.POST.getlist('selectedlist')
+    
+
+    else:
+        list_order_suppliers= request.user.supplierorderlist.filter(Status='en attente')
+        list_order_clients= request.user.clientorderlist.filter(Status='en attente')
+
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount,
+        "list_order_clients" : list_order_clients,
+        "list_order_suppliers" : list_order_suppliers
+        }
+        context.update(info(request))
+        return render(request,"dashboard/order/pendingOrders_list.html",context)
 def order_client_list(request):
+    if request.method == 'POST':
+        selectedlist = request.POST.getlist('selectedlist')
+
+        for i in selectedlist:
+            obj = ClientOrder.objects.get(id=int(i))
+            obj.delete() 
+        return redirect('order_client_list')      
+
+    else:
+        list_order_clients= request.user.clientorderlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount,
+        "list_order_clients" : list_order_clients
+        }
+        context.update(info(request))
+        return render(request,"dashboard/order/order_client_list.html",context)
+
+def order_pending_list(request):
     if request.method == 'POST':
         selectedlist = request.POST.getlist('selectedlist')
 
@@ -925,7 +973,7 @@ def order_supplier_edit(request,id):
             messages.info(request,'Le champ Status ne peut pas etre vide')
             error=True
         if error:
-            return redirect('order_supplier_edit')
+            return redirect('order_supplier_edit',id)
         
         
         obj.Quantity = Quantity
@@ -991,7 +1039,7 @@ def order_client_edit(request,id):
             messages.info(request,'Le champ Status ne peut pas etre vide')
             error=True
         if error:
-            return redirect('order_client_edit')
+            return redirect('order_client_edit',id)
         
         
         obj.Quantity = Quantity
