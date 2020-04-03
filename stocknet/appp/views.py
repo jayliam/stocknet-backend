@@ -958,19 +958,19 @@ def order_supplier_edit(request,id):
         Status = request.POST['status']
         error= False
         if not Product : 
-            messages.info(request,'Le champ Product ne peut pas etre vide')
+            messages.info(request,'Le champ Produit ne peut pas etre vide')
             error=True
         if not Client : 
-            messages.info(request,'Le champ Supplier  ne peut pas etre vide')
+            messages.info(request,'Le champ Fournisseur  ne peut pas etre vide')
             error=True
         if not Quantity : 
-            messages.info(request,'Le champ Quantity ne peut pas etre vide')
+            messages.info(request,'Le champ Quantité ne peut pas etre vide')
             error=True
         if not Date : 
             messages.info(request,'Le champ Date ne peut pas etre vide')
             error=True
         if not Status : 
-            messages.info(request,'Le champ Status ne peut pas etre vide')
+            messages.info(request,'Le champ Etat ne peut pas etre vide')
             error=True
         if error:
             return redirect('order_supplier_edit',id)

@@ -28,7 +28,7 @@
                             </div> 
                             <table class="table table-hover table-striped">
                                 <thead>
-                                    <th>Select</th>
+                                     
                                     <th>Produit</th>
                                     <th>Fournisseur</th>
                                     <th>Quantité</th>
@@ -42,10 +42,7 @@
                                 <form  method="POST"> {% csrf_token %}
                                 {% for entry in list_order_suppliers %}
                                     <tr>
-                                        <td>                                         
-                                            <input type="checkbox" id="selectedlist" name="selectedlist" value="{{entry.id}}">
-                                            <label  for="selectedlist">  </label><br>                                             
-                                        </td>
+                                         
                                         
                                         <td>{{ entry.Product }}</td>
                                         <td>{{ entry.Supplier }}</td>
@@ -85,7 +82,7 @@
                             </div> 
                             <table class="table table-hover table-striped">
                                 <thead>
-                                    <th>Select</th>
+                                    
                                     <th>Produit</th>
                                     <th>Client</th>
                                     <th>Quantité</th>
@@ -99,10 +96,7 @@
                                 <form  method="POST"> {% csrf_token %}
                                 {% for entry in list_order_clients %}
                                     <tr>
-                                        <td>                                         
-                                            <input type="checkbox" id="selectedlist" name="selectedlist" value="{{entry.id}}">
-                                            <label  for="selectedlist">  </label><br>                                             
-                                        </td>
+                                       
                                         
                                         <td>{{ entry.Product }}</td>
                                         <td>{{ entry.Client }}</td>
