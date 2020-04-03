@@ -44,7 +44,10 @@ def dashboard(request):
     Pcount= request.user.productlist.all().count()
     Ccount= request.user.clientlist.all().count()
     Scount= request.user.supplierlist.all().count()
-
+    OScount= request.user.supplierorderlist.all().count()
+    OCcount= request.user.clientorderlist.all().count()
+    
+    PendingOrdersCount=OScount + OCcount
     
     list_products= request.user.productlist.all()
     repture_count=0
@@ -66,6 +69,9 @@ def dashboard(request):
         "Pcount": Pcount,
         "Ccount": Ccount,
         "Scount": Scount,
+        "OScount": OScount,
+        "OCcount": OCcount,
+        "PendingOrdersCount": PendingOrdersCount,
         "stock_count": int(stock_count),
         "stock_neg": stock_neg,
         "notif": notif,
@@ -234,8 +240,10 @@ def product_edit(request, id):
     Scount= request.user.supplierlist.all().count()    
     list_suppliers= request.user.supplierlist.all()
     list_suppliers_obj=[]
-    for s in obj.Suppliers:
-        list_suppliers_obj.append(s)
+    for s in obj.Suppliers.all():
+        list_suppliers_obj.append(s.Name)
+        print(list_suppliers_obj)
+        print("*************************")
     
     context = {
         "list_suppliers" : list_suppliers,
@@ -294,9 +302,15 @@ def product_edit(request, id):
         obj.SalesPrice = salesprice
         obj.Reference = reference
         obj.Manufacturer = manufacturer
-        obj.Suppliers = suppliers
+        #obj.Suppliers = suppliers
         obj.Category = category
         obj.Quantity = quantity
+        for s in suppliers:
+            Sobj=request.user.supplierlist.get(Name=s)
+            #Sobj=Supplier.objects.get(Name=s)
+            Sobj.save()
+            obj.Suppliers.add(Sobj)
+
 
         obj.save()
         messages.info(request,'Produit Sauvgardé')

@@ -243,7 +243,35 @@
                                 </div>
                             </div>
                         </div>
-           
+                        <div class="card-deck text-center">    
+                            <div class="card border-dark mb-3" style="max-width: 18rem;">
+                                <div class="card-header  ">  
+                                    <a class="text-dark " href="/order_supplier_list "><h3 class="font-weight-normal ml-1 mx-auto" >  Commandes Fournisseur   </h3><br> </a>
+                                    
+                                </div>
+                                <div class="card-body text-dark mx-auto">
+                                   <h1 class="font-weight-normal ml-1  mb-5" > <br>  {{OScount}} </h1> 
+                                </div>
+                            </div>
+                            <div class="card border-dark mb-3" style="max-width: 18rem;">
+                                <div class="card-header  ">  
+                                    <a class="text-dark " href="/order_client_list "><h3 class="font-weight-normal ml-1 mx-auto" >  Commandes <br> Client   </h3><br> </a>
+                                    
+                                </div>
+                                <div class="card-body text-dark mx-auto">
+                                   <h1 class="font-weight-normal ml-1  mb-5" > <br>  {{OCcount}} </h1> 
+                                </div>
+                            </div>
+                            <div class="card border-dark mb-3" style="max-width: 18rem;">
+                                <div class="card-header  ">  
+                                    <a class="text-dark " href="/order_client_list "><h3 class="font-weight-normal ml-1 mx-auto" >  Commandes en attente   </h3><br> </a>
+                                    
+                                </div>
+                                <div class="card-body text-dark mx-auto">
+                                   <h1 class="font-weight-normal ml-1  mb-5" > <br>  {{PendingOrdersCount}} </h1> 
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             {% endblock %}
