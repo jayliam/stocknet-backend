@@ -22,5 +22,13 @@ urlpatterns=[
     path('client_list/',views.client_list,name='client_list'),
     path('supplier_create/',views.supplier_create,name='supplier_create'),
     path('supplier_list/',views.supplier_list,name='supplier_list'),
-    
+    path('order_client_list/',views.order_client_list,name='order_client_list'),
+    path('order_client_create/',views.order_client_create,name='order_client_create'),
+    path('order_supplier_create/',views.order_supplier_create,name='order_supplier_create'),
+    path('order_supplier_list/',views.order_supplier_list,name='order_supplier_list'),
+    path('ordersupplier/<int:id>/edit/',views.order_supplier_edit,name='order_supplier_edit'),
+    path('orderclient/<int:id>/edit/',views.order_client_edit,name='order_client_edit'),
+    path('orderclient/<int:id>/delete/',views.order_client_delete,name='order_client_delete'),
+    path('ordersupplier/<int:id>/delete/',views.order_supplier_delete,name='order_supplier_delete'),
+
 ]

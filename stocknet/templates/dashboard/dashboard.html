@@ -88,6 +88,17 @@
 
                         </div>
                      </li>
+                    <li class=" dropdown nav-item {% block activeorder %}  {% endblock %} ">
+                        <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="nc-icon nc-icon fa fa-list-alt "></i>
+                            <p>Commandes : {{Ocount}}</p>   
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="/order_client_list">Commande Client</a>
+                            <a class="dropdown-item" href="/order_supplier_list">Commande Fournisseur</a>
+
+                        </div>
+                     </li>
 
 
 

@@ -1,0 +1,72 @@
+{% extends 'dashboard/dashboard.html' %}
+{% load i18n %}
+{% block deactive %}  {% endblock %}
+{% block activeorder %} active {% endblock %}
+
+
+{% block content %}
+<div class="container-fluid">
+                    <div class="section">
+
+                        <div class="table-responsive table-full-width">
+                            {% for message in messages %}  
+                            <div class="alert alert-success col-md-2 " role="alert">
+                            {{message}}
+                            </div>            
+                            
+                            {% endfor %} 
+                            <div class="row">
+                                <div class="col-md-10" >
+                                    <h2 class="font-weight-normal" >Liste Des commandes fournisseur</h2>
+
+                                </div>
+                                <div class="col-md-2" >
+                                    <a class="btn  btn-bg mt-4" href="/order_supplier_create">
+                                        Ajouter commande fournisseur
+                                    </a>
+                                </div>
+                            </div> 
+                            <table class="table table-hover table-striped">
+                                <thead>
+                                    <th>Select</th>
+                                    <th>Produit</th>
+                                    <th>Fournisseur</th>
+                                    <th>Quantité</th>
+                                    <th>Date</th>
+                                    <th>Etat</th>
+                                    <th>Supprimer</th>
+                                    <th>Modifier</th>
+                                    
+                                </thead>
+                                <tbody>
+                                <form  method="POST"> {% csrf_token %}
+                                {% for entry in list_order_suppliers %}
+                                    <tr>
+                                        <td>                                         
+                                            <input type="checkbox" id="selectedlist" name="selectedlist" value="{{entry.id}}">
+                                            <label  for="selectedlist">  </label><br>                                             
+                                        </td>
+                                        
+                                        <td>{{ entry.Product }}</td>
+                                        <td>{{ entry.Supplier }}</td>
+                                        <td>{{ entry.Quantity }}</td>
+                                        <td> {% language 'fr' %} 
+                                                {{ entry.Date }}
+                                              {% endlanguage %}  
+                                        </td>
+                                        <td>{{ entry.Status }}</td>
+                                        <td><a class=" text-danger "  href="/ordersupplier/{{ entry.id }}/delete">  Supprimer</a></td>
+                                        <td><a class=" text-warning  "  href="/ordersupplier/{{ entry.id }}/edit">  Modifier</a></td>
+
+                                    </tr>
+                                {% endfor %}
+                                <button type="submit" class="btn btn-danger  ">Supprimer  </button> 
+                                </form>     
+                                </tbody>
+                            </table>
+                
+                        </div>
+
+                    </div>
+                </div>
+            {% endblock %}    

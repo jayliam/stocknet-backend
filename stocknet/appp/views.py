@@ -5,10 +5,12 @@ from django.contrib.auth.models import User,auth
 from django.contrib.auth import login
 from products.models import Product
 from clients.models import Client
+from orders.models import SupplierOrder,ClientOrder
 from suppliers.models import Supplier
 from django.contrib import messages
 
 def info(request):
+    Ocount= request.user.clientorderlist.all().count()+request.user.supplierorderlist.all().count()
     list_products= request.user.productlist.all()
     repture_count=0
     stock_neg=0
@@ -26,6 +28,7 @@ def info(request):
         "stock_neg": stock_neg,
         "notif": notif,
         "repture_count": repture_count,
+        "Ocount": Ocount,
         "nbstock_neg": int(nbstock_neg)
     }
     return(context)
@@ -440,6 +443,7 @@ def client_create(request):
     }
         context.update(info(request))
         return render(request,"dashboard/client/client_create.html",context)
+
 def client_edit(request,id):
     obj = get_object_or_404(Client, id=id)
     Pcount= request.user.productlist.all().count()
@@ -500,7 +504,6 @@ def client_list(request):
         selectedlist = request.POST.getlist('selectedlist')
 
         for i in selectedlist:
-            #obj=get_object_or_404(Product, id=int(i))
             obj = Client.objects.get(id=int(i))
             obj.delete() 
         return redirect('client_list')      
@@ -518,10 +521,10 @@ def client_list(request):
         }
         context.update(info(request))
         return render(request,"dashboard/client/client_list.html",context)
+
+
 def client_delete(request, id):
     obj=get_object_or_404(Client, id=id)
-
-
     if request.method == "POST":
         obj.delete()
         return redirect('client_list')
@@ -698,6 +701,360 @@ def supplier_delete(request,id=id):
 
     context.update(info(request))
     return render(request,"dashboard/supplier/supplier_delete.html",context)
+
+
+
+def order_client_list(request):
+    if request.method == 'POST':
+        selectedlist = request.POST.getlist('selectedlist')
+
+        for i in selectedlist:
+            obj = ClientOrder.objects.get(id=int(i))
+            obj.delete() 
+        return redirect('order_client_list')      
+
+    else:
+        list_order_clients= request.user.clientorderlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount,
+        "list_order_clients" : list_order_clients
+        }
+        context.update(info(request))
+        return render(request,"dashboard/order/order_client_list.html",context)
+
+def order_supplier_list(request):
+    if request.method == 'POST':
+        selectedlist = request.POST.getlist('selectedlist')
+
+        for i in selectedlist:
+            obj = SupplierOrder.objects.get(id=int(i))
+            obj.delete() 
+        return redirect('order_supplier_list')      
+
+    else:
+        list_order_suppliers= request.user.supplierorderlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount,
+        "list_order_suppliers" : list_order_suppliers
+        }
+        context.update(info(request))
+        return render(request,"dashboard/order/order_supplier_list.html",context)
+
+
+def order_client_create(request):
+    if request.method == 'POST':
+        
+        P = request.POST['product']
+        Pobj = Product.objects.get(id=P)
+        Pobj.save() 
+        C = request.POST['client']
+        Cobj = Client.objects.get(id=C)
+        Cobj.save()
+
+
+        Quantity = request.POST['quantity']
+        Date = request.POST['date']
+        Status = request.POST['status']
+        error= False
+        if not Product : 
+            messages.info(request,'Le champ Product ne peut pas etre vide')
+            error=True
+        if not Client : 
+            messages.info(request,'Le champ Client  ne peut pas etre vide')
+            error=True
+        if not Quantity : 
+            messages.info(request,'Le champ Quantity ne peut pas etre vide')
+            error=True
+        if not Date : 
+            messages.info(request,'Le champ Date ne peut pas etre vide')
+            error=True
+        if not Status : 
+            messages.info(request,'Le champ Status ne peut pas etre vide')
+            error=True
+        if error:
+            return redirect('order_client_create')
+        print(Date)
+        cOrder = ClientOrder(
+            Quantity = Quantity,
+            Date = Date,
+            Status = Status
+        )
+        cOrder.save()
+        
+        request.user.clientorderlist.add(cOrder)
+        Pobj.clientorderlist.add(cOrder)
+        Cobj.clientorderlist.add(cOrder)
+
+        messages.info(request,'Commande Ajouté')
+        
+        return redirect('order_client_list')
+
+    else:
+        productlist=request.user.productlist.all()
+        clientlist=request.user.clientlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "productlist": productlist,
+        "clientlist": clientlist,
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount
+    }
+        context.update(info(request))
+        return render(request,"dashboard/order/order_client_create.html",context)
+
+def order_supplier_create(request):
+    if request.method == 'POST':
+        
+        P = request.POST['product']
+        Pobj = Product.objects.get(id=P)
+        Pobj.save() 
+        S = request.POST['supplier']
+        Sobj = Supplier.objects.get(id=S)
+        Sobj.save()
+
+
+        Quantity = request.POST['quantity']
+        Date = request.POST['date']
+        Status = request.POST['status']
+        error= False
+        if not Product : 
+            messages.info(request,'Le champ Product ne peut pas etre vide')
+            error=True
+        if not Client : 
+            messages.info(request,'Le champ Supplier  ne peut pas etre vide')
+            error=True
+        if not Quantity : 
+            messages.info(request,'Le champ Quantity ne peut pas etre vide')
+            error=True
+        if not Date : 
+            messages.info(request,'Le champ Date ne peut pas etre vide')
+            error=True
+        if not Status : 
+            messages.info(request,'Le champ Status ne peut pas etre vide')
+            error=True
+        if error:
+            return redirect('order_supplier_create')
+        
+        sOrder = SupplierOrder(
+            Quantity = Quantity,
+            Date = Date,
+            Status = Status
+        )
+        sOrder.save()
+        
+        request.user.supplierorderlist.add(sOrder)
+        Pobj.supplierorderlist.add(sOrder)
+        Sobj.supplierorderlist.add(sOrder)
+
+        messages.info(request,'Commande Ajouté')
+        
+        return redirect('order_supplier_list')
+
+    else:
+        productlist=request.user.productlist.all()
+        supplierlist=request.user.supplierlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "productlist": productlist,
+        "supplierlist": supplierlist,
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount
+        }
+        context.update(info(request))
+        return render(request,"dashboard/order/order_supplier_create.html",context)
+
+
+def order_supplier_edit(request,id):
+    obj = get_object_or_404(SupplierOrder, id=id)
+    if request.method == 'POST':
+        P = request.POST['product']
+        Pobj = Product.objects.get(id=P)
+        Pobj.save() 
+        S = request.POST['supplier']
+        Sobj = Supplier.objects.get(id=S)
+        Sobj.save()
+
+
+        Quantity = request.POST['quantity']
+        Date = request.POST['date']
+        Status = request.POST['status']
+        error= False
+        if not Product : 
+            messages.info(request,'Le champ Product ne peut pas etre vide')
+            error=True
+        if not Client : 
+            messages.info(request,'Le champ Supplier  ne peut pas etre vide')
+            error=True
+        if not Quantity : 
+            messages.info(request,'Le champ Quantity ne peut pas etre vide')
+            error=True
+        if not Date : 
+            messages.info(request,'Le champ Date ne peut pas etre vide')
+            error=True
+        if not Status : 
+            messages.info(request,'Le champ Status ne peut pas etre vide')
+            error=True
+        if error:
+            return redirect('order_supplier_edit')
+        
+        
+        obj.Quantity = Quantity
+        obj.Date = Date
+        obj.Status = Status
+        
+        obj.save()
+        
+        request.user.supplierorderlist.add(obj)
+        Pobj.supplierorderlist.add(obj)
+        Sobj.supplierorderlist.add(obj)
+
+        messages.info(request,'Commande Modifié')
+        
+        return redirect('order_supplier_list')
+
+    else:
+        
+        productlist=request.user.productlist.all()
+        supplierlist=request.user.supplierlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "productlist": productlist,
+        "supplierlist": supplierlist,
+        "obj": obj,
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount
+        }
+        context.update(info(request))
+        return render(request,"dashboard/order/order_supplier_edit.html",context)
+
+def order_client_edit(request,id):
+    obj = get_object_or_404(ClientOrder, id=id)
+    if request.method == 'POST':
+        P = request.POST['product']
+        Pobj = Product.objects.get(id=P)
+        Pobj.save() 
+        C = request.POST['client']
+        Cobj = Client.objects.get(id=C)
+        Cobj.save()
+
+
+        Quantity = request.POST['quantity']
+        Date = request.POST['date']
+        Status = request.POST['status']
+        error= False
+        if not Product : 
+            messages.info(request,'Le champ Product ne peut pas etre vide')
+            error=True
+        if not Client : 
+            messages.info(request,'Le champ Supplier  ne peut pas etre vide')
+            error=True
+        if not Quantity : 
+            messages.info(request,'Le champ Quantity ne peut pas etre vide')
+            error=True
+        if not Date : 
+            messages.info(request,'Le champ Date ne peut pas etre vide')
+            error=True
+        if not Status : 
+            messages.info(request,'Le champ Status ne peut pas etre vide')
+            error=True
+        if error:
+            return redirect('order_client_edit')
+        
+        
+        obj.Quantity = Quantity
+        obj.Date = Date
+        obj.Status = Status
+        
+        obj.save()
+        
+        request.user.clientorderlist.add(obj)
+        Pobj.clientorderlist.add(obj)
+        Cobj.clientorderlist.add(obj)
+
+        messages.info(request,'Commande Modifié')
+        
+        return redirect('order_client_list')
+
+    else:
+        
+        productlist=request.user.productlist.all()
+        clientlist=request.user.clientlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "productlist": productlist,
+        "clientlist": clientlist,
+        "obj": obj,
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount
+        }
+        context.update(info(request))
+        return render(request,"dashboard/order/order_client_edit.html",context)
+
+
+def order_client_delete(request, id):
+    obj=get_object_or_404(ClientOrder, id=id)
+    if request.method == "POST":
+        obj.delete()
+        return redirect('order_client_list')
+    else:
+       
+        list_clients= request.user.clientlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "obj":obj,
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount,
+        "list_clients" : list_clients
+        }
+        context.update(info(request))
+        return render(request,"dashboard/order/order_client_delete.html",context)
+
+def order_supplier_delete(request, id):
+    obj=get_object_or_404(SupplierOrder, id=id)
+    if request.method == "POST":
+        obj.delete()
+        return redirect('order_supplier_list')
+    else:
+       
+        list_clients= request.user.clientlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "obj":obj,
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount,
+        "list_clients" : list_clients
+        }
+        context.update(info(request))
+        return render(request,"dashboard/order/order_supplier_delete.html",context)
+
 
 def contact(request):
     return render(request,"contact.html",{})

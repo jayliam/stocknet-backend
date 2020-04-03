@@ -17,7 +17,7 @@ class ClientOrder(models.Model):
     Quantity      = models.DecimalField(decimal_places=2, max_digits=20, default=0, null=True)
     Date          = models.DateField(null=True)
     Status        = models.CharField(max_length=20, choices=Values , blank=False, null=True)
-    user          = models.ForeignKey(User, on_delete=models.CASCADE, related_name="ClientOrderlist", null=True) # <--- added
+    user          = models.ForeignKey(User, on_delete=models.CASCADE, related_name="clientorderlist", null=True) # <--- added
     
   
 
@@ -28,6 +28,6 @@ class SupplierOrder(models.Model):
     Quantity      = models.DecimalField(decimal_places=2, max_digits=20, default=0, null=True)
     Date          = models.DateField( null=True)
     Status        = models.CharField(max_length=20, choices=Values, null=True)
-    user          = models.ForeignKey(User, on_delete=models.CASCADE, related_name="supplierOrderlist", null=True) # <--- added
+    user          = models.ForeignKey(User, on_delete=models.CASCADE, related_name="supplierorderlist", null=True) # <--- added
     
   
