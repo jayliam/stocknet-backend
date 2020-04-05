@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect,get_object_or_404
-from django.http import HttpResponse
+from django.shortcuts import render, redirect,get_object_or_404,reverse
+from django.http import HttpResponse, HttpResponseRedirect
 from .models import Service
 from django.contrib.auth.models import User,auth
 from django.contrib.auth import login
@@ -8,6 +8,7 @@ from clients.models import Client
 from orders.models import SupplierOrder,ClientOrder
 from suppliers.models import Supplier
 from django.contrib import messages
+
 
 def info(request):
     Ocount= request.user.clientorderlist.all().count()+request.user.supplierorderlist.all().count()
@@ -1098,9 +1099,9 @@ def order_client_delete(request, id):
 def order_client_deliver(request, id):
     order=get_object_or_404(ClientOrder, id=id)
     if order.Quantity > order.Product.Quantity:
-        
-        messages.warning(request,'Quantité insuffisante')
-        return redirect('order_client_list')
+        return redirect('order_client_deliver_confirm',id=id)
+
+
     else:
         order.Product.Quantity=order.Product.Quantity-order.Quantity
         order.Product.save()
@@ -1108,6 +1109,29 @@ def order_client_deliver(request, id):
         order.save()
         messages.info(request,'Produit livré')
         return redirect('order_client_list')
+       
+def order_client_deliver_confirm(request, id):
+    order=get_object_or_404(ClientOrder, id=id)
+    if request.method == "POST":
+        order.Product.Quantity=order.Product.Quantity-order.Quantity
+        order.Product.save()
+        order.Status='livré'
+        order.save()
+        return redirect('order_client_list')
+    else:
+        list_clients= request.user.clientlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "obj":order,
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount,
+        "list_clients" : list_clients
+        }
+        context.update(info(request))
+        return render(request,"dashboard/order/order_client_deliver_confirm.html",context)
        
 def order_supplier_delete(request, id):
     obj=get_object_or_404(SupplierOrder, id=id)
