@@ -30,6 +30,7 @@ urlpatterns=[
     path('ordersupplier/<int:id>/edit/',views.order_supplier_edit,name='order_supplier_edit'),
     path('orderclient/<int:id>/edit/',views.order_client_edit,name='order_client_edit'),
     path('orderclient/<int:id>/delete/',views.order_client_delete,name='order_client_delete'),
+    path('orderclient/<int:id>/deliver/',views.order_client_deliver,name='order_client_deliver'),
     path('ordersupplier/<int:id>/delete/',views.order_supplier_delete,name='order_supplier_delete'),
 
 ]

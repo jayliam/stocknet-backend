@@ -1095,7 +1095,20 @@ def order_client_delete(request, id):
         }
         context.update(info(request))
         return render(request,"dashboard/order/order_client_delete.html",context)
-
+def order_client_deliver(request, id):
+    order=get_object_or_404(ClientOrder, id=id)
+    if order.Quantity > order.Product.Quantity:
+        
+        messages.warning(request,'Quantité insuffisante')
+        return redirect('order_client_list')
+    else:
+        order.Product.Quantity=order.Product.Quantity-order.Quantity
+        order.Product.save()
+        order.Status='livré'
+        order.save()
+        messages.info(request,'Produit livré')
+        return redirect('order_client_list')
+       
 def order_supplier_delete(request, id):
     obj=get_object_or_404(SupplierOrder, id=id)
     if request.method == "POST":
