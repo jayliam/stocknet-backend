@@ -827,7 +827,7 @@ def order_client_create(request):
 
         Quantity = request.POST['quantity']
         Date = request.POST['date']
-        Status = request.POST['status']
+        Status =  "en attente"
         error= False
         if not Product : 
             messages.info(request,'Le champ Product ne peut pas etre vide')
@@ -891,7 +891,7 @@ def order_supplier_create(request):
 
         Quantity = request.POST['quantity']
         Date = request.POST['date']
-        Status = request.POST['status']
+        Status = "en attente"
         error= False
         if not Product : 
             messages.info(request,'Le champ Product ne peut pas etre vide')
@@ -905,12 +905,10 @@ def order_supplier_create(request):
         if not Date : 
             messages.info(request,'Le champ Date ne peut pas etre vide')
             error=True
-        if not Status : 
-            messages.info(request,'Le champ Status ne peut pas etre vide')
-            error=True
+        
         if error:
             return redirect('order_supplier_create')
-        
+       
         sOrder = SupplierOrder(
             Quantity = Quantity,
             Date = Date,
@@ -1096,11 +1094,21 @@ def order_client_delete(request, id):
         }
         context.update(info(request))
         return render(request,"dashboard/order/order_client_delete.html",context)
+def order_supplier_deliver(request, id):
+
+    order=get_object_or_404(SupplierOrder, id=id)
+    order.Product.Quantity=order.Product.Quantity+order.Quantity
+    order.Product.save()
+    order.Status='livré'
+    order.save()
+    messages.info(request,'Produit livré')
+    return redirect('order_supplier_list')
+
+
 def order_client_deliver(request, id):
     order=get_object_or_404(ClientOrder, id=id)
     if order.Quantity > order.Product.Quantity:
         return redirect('order_client_deliver_confirm',id=id)
-
 
     else:
         order.Product.Quantity=order.Product.Quantity-order.Quantity

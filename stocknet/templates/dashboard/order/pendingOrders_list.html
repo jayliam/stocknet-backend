@@ -34,6 +34,7 @@
                                     <th>Quantité</th>
                                     <th>Date</th>
                                     <th>Etat</th>
+                                    <th>Livrer</th>
                                     <th>Supprimer</th>
                                     <th>Modifier</th>
                                     
@@ -52,6 +53,8 @@
                                               {% endlanguage %}  
                                         </td>
                                         <td>{{ entry.Status }}</td>
+                                        <td><a class=" text-success btn btn-success"  href="/ordersupplier/{{ entry.id }}/deliver">  Livrer</a></td>
+
                                         <td><a class=" text-danger btn btn-danger"  href="/ordersupplier/{{ entry.id }}/delete">  Supprimer</a></td>
                                         <td><a class=" text-warning btn btn-warning "  href="/ordersupplier/{{ entry.id }}/edit">  Modifier</a></td>
 
@@ -88,6 +91,7 @@
                                     <th>Quantité</th>
                                     <th>Date</th>
                                     <th>Etat</th>
+                                    <th>Livrer</th>
                                     <th>Supprimer</th>
                                     <th>Modifier</th>
                                     
@@ -106,6 +110,8 @@
                                               {% endlanguage %}  
                                         </td>
                                         <td>{{ entry.Status }}</td>
+                                        <td><a class=" text-success btn btn-success"  href="/orderclient/{{ entry.id }}/deliver">  Livrer</a></td>
+                                        
                                         <td><a class=" text-danger btn btn-danger "  href="/orderclient/{{ entry.id }}/delete">  Supprimer</a></td>
                                         <td><a class=" text-warning btn btn-warning "  href="/orderclient/{{ entry.id }}/edit">  Modifier</a></td>
 

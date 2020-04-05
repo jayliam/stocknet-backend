@@ -56,7 +56,15 @@
                                         
                                         <td>{{ entry.Product }}</td>
                                         <td>{{ entry.Client }}</td>
-                                        <td>{{ entry.Quantity }}</td>
+                                        {% if entry.Status == 'en attente' %}
+                                            {% if entry.Quantity > entry.Product.Quantity %}
+                                                <td class="text-danger" >{{ entry.Quantity }}</td>
+                                            {% else %}
+                                                <td class="text-success" >{{ entry.Quantity }}</td>
+                                            {% endif %}
+                                        {% else %}
+                                            <td  >{{ entry.Quantity }}</td>
+                                        {% endif %}
                                         <td> {% language 'fr' %} 
                                                 {{ entry.Date }}
                                               {% endlanguage %}  
