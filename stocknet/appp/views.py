@@ -3,11 +3,112 @@ from django.http import HttpResponse, HttpResponseRedirect
 from .models import Service
 from django.contrib.auth.models import User,auth
 from django.contrib.auth import login
-from products.models import Product
+from products.models import Product,StockTrack
 from clients.models import Client
 from orders.models import SupplierOrder,ClientOrder
 from suppliers.models import Supplier
 from django.contrib import messages
+from django.utils import timezone
+
+def init_stock_track(request):
+    today=timezone.now().date()
+    stocktraking = request.user.stocktracklist.order_by('Date')
+    if stocktraking.count() == 0 : 
+        newTrack = StockTrack(
+            Stock = 0,
+            Date = today
+        )
+        newTrack.save()
+        request.user.stocktracklist.add(newTrack)
+def product_stock_track(product,request):
+    today=timezone.now().date()
+    stocktraking = request.user.stocktracklist.order_by('Date')
+    if stocktraking.count() > 0:
+        b= False
+        for t in stocktraking:
+            if t.Date == today:
+                b=True
+                st=t
+        if b:
+            st.Stock = int(st.Stock) + product.Quantity
+            st.save()
+        else:
+            newTrack = StockTrack(
+                Stock = stocktraking.reverse()[0].Stock + product.Quantity,
+                Date = today
+            )
+
+            newTrack.save()
+            request.user.stocktracklist.add(newTrack)
+    if stocktraking.count() == 0:
+        if int(product.Quantity) > -1 :
+            newTrack = StockTrack(
+                    
+                    Stock = product.Quantity,
+                    Date = today
+                )
+        if int (product.Quantity) < 0 :
+            newTrack = StockTrack(
+                    
+                    Stock = 0,
+                    Date = today
+                )
+        newTrack.save()
+        request.user.stocktracklist.add(newTrack)
+
+def create_stock_track_client_confirm(request,order):
+    stocktraking = request.user.stocktracklist.order_by('Date')
+    b = False
+    for t in stocktraking:
+        if order.Date == t.Date :
+            b = True
+            st = t
+    if b : 
+        st.Stock = st.Stock - order.Product.Quantity
+        st.save()
+    else:
+        newTrack = StockTrack(
+            Stock = stocktraking.reverse()[0].Stock - order.Product.Quantity,
+            Date = order.Date
+        )
+        newTrack.save()
+        request.user.stocktracklist.add(newTrack)
+def create_stock_track_client(request,order):
+    stocktraking = request.user.stocktracklist.order_by('Date')
+    b = False
+    for t in stocktraking:
+        if order.Date == t.Date :
+            b = True
+            st = t
+    if b : 
+        st.Stock = st.Stock - order.Quantity
+        st.save()
+    else:
+        newTrack = StockTrack(
+            Stock = stocktraking.reverse()[0].Stock - order.Quantity,
+            Date = order.Date
+        )
+        newTrack.save()
+        request.user.stocktracklist.add(newTrack)
+
+def create_stock_track_supplier(request,order):
+    stocktraking = request.user.stocktracklist.order_by('Date')
+    b = False
+    for t in stocktraking:
+        if order.Date == t.Date :
+            b = True
+            st = t
+    if b : 
+        st.Stock = st.Stock + order.Quantity
+        st.save()
+    else:
+        newTrack = StockTrack(
+            Stock = stocktraking.reverse()[0].Stock + order.Quantity,
+            Date = order.Date
+        )
+        newTrack.save()
+        request.user.stocktracklist.add(newTrack)
+        
 
 
 def info(request):
@@ -19,6 +120,14 @@ def info(request):
     OSPcount=list_order_suppliers= request.user.supplierorderlist.filter(Status='en attente').count()
     OCPcount=list_order_clients= request.user.clientorderlist.filter(Status='en attente').count()
     
+    strack=[]
+    dtrack=[]
+    stocktraking = request.user.stocktracklist.order_by('Date')
+    for t in stocktraking:
+        strack.append(int(t.Stock))
+        dtrack.append(str(t.Date))
+    
+
     PendingOrdersCount=OCPcount + OSPcount
     repture_count=0
     stock_neg=0
@@ -32,6 +141,7 @@ def info(request):
             nbstock_neg=nbstock_neg+entry.Quantity
     if ((repture_count > 0) or (nbstock_neg < 0)):
         notif=True
+    tody=timezone.now().date()
     context= {
         "stock_neg": stock_neg,
         "notif": notif,
@@ -40,6 +150,9 @@ def info(request):
         "PendingOrdersCount": PendingOrdersCount,
         "repture_count": repture_count,
         "Ocount": Ocount,
+        "tody": tody,
+        "dtrack": dtrack,
+        "strack": strack,
         "nbstock_neg": int(nbstock_neg)
     }
     return(context)
@@ -218,6 +331,8 @@ def product_create(request):
             product.Suppliers.add(Sobj)
         #product.Suppliers.set(suppliers)
         request.user.productlist.add(product)
+        product_stock_track(product,request)
+        init_stock_track(request)
         messages.info(request,'Produit Ajouté')
         return redirect('product_list')
 
@@ -846,7 +961,6 @@ def order_client_create(request):
             error=True
         if error:
             return redirect('order_client_create')
-        print(Date)
         cOrder = ClientOrder(
             Quantity = Quantity,
             Date = Date,
@@ -1101,6 +1215,7 @@ def order_supplier_deliver(request, id):
     order.Product.save()
     order.Status='livré'
     order.save()
+    create_stock_track_supplier(request,order)
     messages.info(request,'Produit livré')
     return redirect('order_supplier_list')
 
@@ -1115,16 +1230,19 @@ def order_client_deliver(request, id):
         order.Product.save()
         order.Status='livré'
         order.save()
+        create_stock_track_client(request,order)
         messages.info(request,'Produit livré')
         return redirect('order_client_list')
        
 def order_client_deliver_confirm(request, id):
     order=get_object_or_404(ClientOrder, id=id)
     if request.method == "POST":
+        create_stock_track_client_confirm(request,order)
         order.Product.Quantity=order.Product.Quantity-order.Quantity
         order.Product.save()
         order.Status='livré'
         order.save()
+        
         return redirect('order_client_list')
     else:
         list_clients= request.user.clientlist.all()
