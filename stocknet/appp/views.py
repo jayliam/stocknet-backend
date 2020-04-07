@@ -30,11 +30,11 @@ def product_stock_track(product,request):
                 b=True
                 st=t
         if b:
-            st.Stock = int(st.Stock) + product.Quantity
+            st.Stock = int(st.Stock) + int(product.Quantity)
             st.save()
         else:
             newTrack = StockTrack(
-                Stock = stocktraking.reverse()[0].Stock + product.Quantity,
+                Stock = int(stocktraking.reverse()[0].Stock) + int(product.Quantity),
                 Date = today
             )
 
@@ -44,7 +44,7 @@ def product_stock_track(product,request):
         if int(product.Quantity) > -1 :
             newTrack = StockTrack(
                     
-                    Stock = product.Quantity,
+                    Stock = int(product.Quantity),
                     Date = today
                 )
         if int (product.Quantity) < 0 :
@@ -64,7 +64,7 @@ def create_stock_track_client_confirm(request,order):
             b = True
             st = t
     if b : 
-        st.Stock = st.Stock - order.Product.Quantity
+        st.Stock = st.Stock - int(order.Product.Quantity)
         st.save()
     else:
         newTrack = StockTrack(
@@ -141,7 +141,7 @@ def info(request):
             nbstock_neg=nbstock_neg+entry.Quantity
     if ((repture_count > 0) or (nbstock_neg < 0)):
         notif=True
-    tody=timezone.now().date()
+    
     context= {
         "stock_neg": stock_neg,
         "notif": notif,
@@ -150,7 +150,7 @@ def info(request):
         "PendingOrdersCount": PendingOrdersCount,
         "repture_count": repture_count,
         "Ocount": Ocount,
-        "tody": tody,
+        "today": timezone.now().date(),
         "dtrack": dtrack,
         "strack": strack,
         "nbstock_neg": int(nbstock_neg)
