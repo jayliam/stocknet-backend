@@ -8,7 +8,7 @@ var chLine = document.getElementById("chLine");
 var chartData = {
   labels: ["S", "M", "T", "W", "T", "F", "S"],
   datasets: [{
-    data: [589, 445, 483, 503, 689, 692, 634],
+    data: [700, 445, JSstock_count, 503, 689, 692, 634],
     backgroundColor: 'transparent',
     borderColor: colors[0],
     borderWidth: 4,
