@@ -84,10 +84,16 @@ def create_stock_track_client(request,order):
         st.Stock = st.Stock - order.Quantity
         st.save()
     else:
-        newTrack = StockTrack(
-            Stock = stocktraking.reverse()[0].Stock - order.Quantity,
-            Date = order.Date
-        )
+        if order.Date <  stocktraking.reverse()[0].Date :
+            newTrack = StockTrack(
+                Stock = 0,
+                Date = order.Date
+            )
+        else :
+            newTrack = StockTrack(
+                Stock = stocktraking.reverse()[0].Stock - order.Quantity,
+                Date = order.Date
+            )
         newTrack.save()
         request.user.stocktracklist.add(newTrack)
 
@@ -102,12 +108,19 @@ def create_stock_track_supplier(request,order):
         st.Stock = st.Stock + order.Quantity
         st.save()
     else:
-        newTrack = StockTrack(
-            Stock = stocktraking.reverse()[0].Stock + order.Quantity,
-            Date = order.Date
-        )
-        newTrack.save()
-        request.user.stocktracklist.add(newTrack)
+        if order.Date <  stocktraking.reverse()[0].Date :
+            newTrack = StockTrack(
+                Stock = order.Quantity,
+                Date = order.Date
+            )
+        else:    
+            
+            newTrack = StockTrack(
+                Stock = stocktraking.reverse()[0].Stock + order.Quantity  ,
+                Date = order.Date
+            )
+            newTrack.save()
+            request.user.stocktracklist.add(newTrack)
         
 
 
@@ -122,7 +135,7 @@ def info(request):
     
     strack=[]
     dtrack=[]
-    stocktraking = request.user.stocktracklist.order_by('Date')
+    stocktraking = request.user.stocktracklist.order_by('Date')[:30]
     for t in stocktraking:
         strack.append(int(t.Stock))
         dtrack.append(str(t.Date))
