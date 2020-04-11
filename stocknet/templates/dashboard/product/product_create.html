@@ -94,7 +94,7 @@
                                             <input type="checkbox" id="suppliers" name="suppliers" value="{{s.Name}}">
                                             <label  for="suppliers"> {{s.Name}} </label><br>
                                             {% endfor %}
-                                               
+                                            <div data-bind='simpleGrid: gridViewModel'> </div> 
                                             <a class="btn  pull-right btn-sm" href="/supplier_create">
                                                Ajouter Fournisseur
                                             </a>
@@ -108,7 +108,10 @@
                             
 
                         </div>           
-                        
+                        <script>
+                            
+                            var JSlist_suppliers = {{ list_suppliers }};
+                        </script>
               
                                                  
                                     
