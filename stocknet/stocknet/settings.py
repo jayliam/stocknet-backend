@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'suppliers',
     'phone_field',
     'multiselectfield',
+    'bootstrap_modal_forms',
+    'widget_tweaks',
     'SS',
 ]
 

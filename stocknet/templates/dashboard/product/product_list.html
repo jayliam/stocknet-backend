@@ -84,9 +84,11 @@
                                         {% if entry.Quantity == 0 %}
                                             <td class=" text-warning " > 0</td>
                                         {% endif %}
+                                        {% comment %} <td><a href="/product/{{ entry.id }}/delete" class=" btn btn-danger" title="Delete" > Supprimer <a/></td> {% endcomment %}
                                         <td><a href="/product/{{ entry.id }}/delete" class=" btn btn-danger" title="Delete" > Supprimer <a/></td>
                                         <td><a class=" text-warning btn btn-warning "  href="/product/{{ entry.id }}/edit">  Modifier</a></td>
                                     </tr>
+                                    
                                 {% endfor %}
                                 <button type="submit" class="btn btn-danger  ">Supprimer  </button> 
                                 </form>
