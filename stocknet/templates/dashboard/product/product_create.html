@@ -95,7 +95,10 @@
                                             <label  for="suppliers"> {{s.Name}} </label><br>
                                             {% endfor %}
                                             <div data-bind='simpleGrid: gridViewModel'> </div> 
-                                            <a class="btn  pull-right btn-sm" href="/supplier_create">
+                                            <a  class="btn  pull-right btn-sm" href="/supplier_createPOPUP" onclick="window.open('/supplier_createPOPUP', 
+                                                                                                                    'newwindow', 
+                                                                                                                    'width=430,height=740'); 
+                                                                                                        return false;" >
                                                Ajouter Fournisseur
                                             </a>
                                                                                         
@@ -111,6 +114,9 @@
                         <script>
                             
                             var JSlist_suppliers = {{ list_suppliers }};
+                            function popupUploadForm(){
+                                var newWindow = window.open('/supplier_create', 'name', 'height=500,width=600');
+                            }
                         </script>
               
                                                  

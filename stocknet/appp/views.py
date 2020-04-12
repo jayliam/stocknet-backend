@@ -746,6 +746,66 @@ def supplier_create(request):
     }
         context.update(info(request))
         return render(request,"dashboard/supplier/supplier_create.html",context)
+
+def supplier_createPOPUP(request):
+    if request.method == 'POST':
+        Type = request.POST['type']
+        Name = request.POST['name']
+        Phone = request.POST['phone']
+        Category = request.POST['category']
+        Reference = request.POST['reference']
+        Adress = request.POST['adress']
+        Note = request.POST['note']
+        
+        error= False
+        if not Name : 
+            messages.info(request,'Le champ Nom  ne peut pas etre vide')
+            error=True
+        if not Phone : 
+            messages.info(request,'Le champ Numero telephone  ne peut pas etre vide')
+            error=True
+        if not Reference : 
+            messages.info(request,'Le champ Reference ne peut pas etre vide')
+            error=True
+        if not Adress : 
+            messages.info(request,'Le champ Reference ne peut pas etre vide')
+            error=True
+        if not Category : 
+            messages.info(request,'Le champ Categorie ne peut pas etre vide')
+            error=True
+
+        if error:
+            return redirect('supplier_createPOPUP')
+
+        supplier = Supplier(
+            Type = Type,
+            Name = Name,
+            Phone = Phone,
+            Category = Category,
+            Reference = Reference,
+            Adress = Adress,
+            Note = Note
+        )
+        supplier.save()
+        request.user.supplierlist.add(supplier)  
+        messages.info(request,'Fournisseur Ajouté')
+        return redirect('supplier_close')
+
+    else:
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount
+    }
+        context.update(info(request))
+        return render(request,"dashboard/supplier/supplier_create.html",context)
+
+def supplier_close(request):
+    return render(request,"dashboard/supplier/supplier_close.html",{})
+
 def supplier_edit(request,id=id):
     obj = get_object_or_404(Supplier, id=id)
     Pcount= request.user.productlist.all().count()

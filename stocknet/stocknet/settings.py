@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'stocknet.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "PS2",
+        'NAME': "PS",
         'USER': 'postgres',
         'PASSWORD' : '1234',
         'HOST' : 'localhost'

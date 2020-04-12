@@ -20,7 +20,11 @@ urlpatterns=[
     path('reptureproduct_list/',views.reptureproduct_list,name='reptureproduct_list'),
     path('client_create/',views.client_create,name='client_create'),
     path('client_list/',views.client_list,name='client_list'),
+    path('supplier_createPOPUP/',views.supplier_createPOPUP,name='supplier_createPOPUP'),
+    path('supplier_close/',views.supplier_close,name='supplier_close'),
+
     path('supplier_create/',views.supplier_create,name='supplier_create'),
+    path('supplier_create/?_to_field=id&_popup=1',views.supplier_create,name='supplier_create'),
     path('supplier_list/',views.supplier_list,name='supplier_list'),
     path('order_client_list/',views.order_client_list,name='order_client_list'),
     path('order_client_create/',views.order_client_create,name='order_client_create'),
