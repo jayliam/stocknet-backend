@@ -177,21 +177,7 @@
                                 </div>
                             </div>
                         </div>
-                        <script>
-                            var JSstock_count = {{ stock_count }};
-                            var JSPcount = {{ Pcount }};
-                            var JSCcount = {{ Ccount }};
-                            var JSScount = {{ Scount }};
-                            var JSrepture_count = {{ repture_count }};
-                            var JSnbstock_neg = {{ nbstock_neg }};
-                            var JSstock_neg = {{ stock_neg }};
-                            var JSPendingOrdersCount = {{ PendingOrdersCount }};
-                            var JSOCcount = {{ OCcount }};
-                            var JSOScount = {{ OScount }};
-                            var JSdtrack = {{ dtrack|safe }};
-                            var JSstrack = {{ strack|safe }};
-                            
-                        </script>
+
                         <p> Stonks Boi  </p>
                         
                        
@@ -344,7 +330,22 @@
                 </div>
             {% endblock %}
             </div>
-            
+                        <script>
+                        
+                            var JSstock_count = {{ stock_count }};
+                            var JSPcount = {{ Pcount }};
+                            var JSCcount = {{ Ccount }};
+                            var JSScount = {{ Scount }};
+                            var JSrepture_count = {{ repture_count }};
+                            var JSnbstock_neg = {{ nbstock_neg }};
+                            var JSstock_neg = {{ stock_neg }};
+                            var JSPendingOrdersCount = {{ PendingOrdersCount }};
+                            var JSOCcount = {{ OCcount }};
+                            var JSOScount = {{ OScount }};
+                            var JSdtrack = {{ dtrack|safe }};
+                            var JSstrack = {{ strack|safe }};
+                            
+                        </script>
         </div>
     </div>
 </body>
@@ -360,8 +361,9 @@
 
 <script src="{% static 'chart.js/dist/Chart.min.js'%}"></script>
 <script src="{% static 'knockout/knockout.js'%}"></script>
-
 <script src="{% static 'jquery/myjs.js'%}"></script>
+
+
 
 <!--  Chartist Plugin  -->
 <script src="{% static 'assets/js/plugins/chartist.min.js'%}"></script>
