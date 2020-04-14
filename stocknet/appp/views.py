@@ -1014,6 +1014,7 @@ def order_client_create(request):
 
 
         Quantity = request.POST['quantity']
+        Total = float(Quantity) * float(Pobj.SalesPrice)
         Date = request.POST['date']
         Status =  "en attente"
         error= False
@@ -1034,10 +1035,12 @@ def order_client_create(request):
             error=True
         if error:
             return redirect('order_client_create')
+        
         cOrder = ClientOrder(
             Quantity = Quantity,
             Date = Date,
-            Status = Status
+            Status = Status,
+            Total = Total
         )
         cOrder.save()
         
@@ -1079,6 +1082,7 @@ def order_supplier_create(request):
         Quantity = request.POST['quantity']
         Date = request.POST['date']
         Status = "en attente"
+        Total = float(Quantity) * float(Pobj.PurchasePrice)
         error= False
         if not Product : 
             messages.info(request,'Le champ Product ne peut pas etre vide')
@@ -1099,6 +1103,7 @@ def order_supplier_create(request):
         sOrder = SupplierOrder(
             Quantity = Quantity,
             Date = Date,
+            Total = Total,
             Status = Status
         )
         sOrder.save()
@@ -1140,6 +1145,7 @@ def order_supplier_edit(request,id):
 
 
         Quantity = request.POST['quantity']
+        Total = float(Quantity) * float(Pobj.PurchasePrice)
         Date = request.POST['date']
         Status = request.POST['status']
         error= False
@@ -1165,6 +1171,7 @@ def order_supplier_edit(request,id):
         obj.Quantity = Quantity
         obj.Date = Date
         obj.Status = Status
+        obj.Total = Total
         
         obj.save()
         
@@ -1206,6 +1213,7 @@ def order_client_edit(request,id):
 
 
         Quantity = request.POST['quantity']
+        Total = float(Quantity) * float(Pobj.SalesPrice)
         Date = request.POST['date']
         Status = request.POST['status']
         error= False
@@ -1231,6 +1239,7 @@ def order_client_edit(request,id):
         obj.Quantity = Quantity
         obj.Date = Date
         obj.Status = Status
+        obj.Total = Total
         
         obj.save()
         

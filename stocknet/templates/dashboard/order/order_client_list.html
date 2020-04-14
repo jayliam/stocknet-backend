@@ -1,5 +1,6 @@
 {% extends 'dashboard/dashboard.html' %}
 {% load i18n %}
+
 {% block deactive %}  {% endblock %}
 {% block activeorder %} active {% endblock %}
 
@@ -38,6 +39,7 @@
                                     <th>Produit</th>
                                     <th>Client</th>
                                     <th>Quantité</th>
+                                    <th>Total</th>
                                     <th>Date</th>
                                     <th>Etat</th>
                                     <th>Livrer</th>
@@ -65,6 +67,8 @@
                                         {% else %}
                                             <td  >{{ entry.Quantity }}</td>
                                         {% endif %}
+                                        
+                                        <td  >{{entry.Total }}</td>
                                         <td> {% language 'fr' %} 
                                                 {{ entry.Date }}
                                               {% endlanguage %}  

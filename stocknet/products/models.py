@@ -7,7 +7,7 @@ class Product(models.Model):
     Title         = models.CharField(max_length=100)
     Description   = models.CharField(max_length=100, null = True)
     PurchasePrice = models.DecimalField(decimal_places=2, max_digits=20,default=0)
-    SalesPrice    = models.DecimalField(decimal_places=2, max_digits=20,default=0,null=True)
+    SalesPrice    = models.DecimalField(decimal_places=2, max_digits=20,default=0)
     Reference     = models.CharField(max_length=100)
     Manufacturer  = models.CharField(max_length=100)
     Suppliers     = models.ManyToManyField(Supplier)
