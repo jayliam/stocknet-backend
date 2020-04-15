@@ -9,6 +9,11 @@ from orders.models import SupplierOrder,ClientOrder
 from suppliers.models import Supplier
 from django.contrib import messages
 from django.utils import timezone
+from django.forms import inlineformset_factory
+
+from neworders.forms import nOrderCForm,nClientOrderForm
+from neworders.models import nOrderS,nOrderC,nSupplierOrder,nClientOrder
+
 
 def init_stock_track(request):
     today=timezone.now().date()
@@ -937,12 +942,14 @@ def order_client_list(request):
         selectedlist = request.POST.getlist('selectedlist')
 
         for i in selectedlist:
-            obj = ClientOrder.objects.get(id=int(i))
+            #obj = ClientOrder.objects.get(id=int(i))
+            obj = nClientOrder.objects.get(id=int(i))
             obj.delete() 
         return redirect('order_client_list')      
 
     else:
-        list_order_clients= request.user.clientorderlist.all()
+        #list_order_clients= request.user.clientorderlist.all()
+        list_order_clients= request.user.nclientorderlist.all()
         Pcount= request.user.productlist.all().count()
         Ccount= request.user.clientlist.all().count()
         Scount= request.user.supplierlist.all().count()
@@ -1271,7 +1278,7 @@ def order_client_edit(request,id):
 
 
 def order_client_delete(request, id):
-    obj=get_object_or_404(ClientOrder, id=id)
+    obj=get_object_or_404(nClientOrder, id=id)
     if request.method == "POST":
         obj.delete()
         return redirect('order_client_list')
@@ -1374,3 +1381,67 @@ def services(request):
 
 def learnmore(request):
     return render(request,"learnmore.html",{})
+
+
+def nClientOrder_create(request):
+    OrderFormSet = inlineformset_factory( nClientOrder,nOrderC, fields = ('Product', 'Quantity',  ),extra= 10 )
+    form = nClientOrderForm()
+    #oform = nOrderCForm() 
+    formset = OrderFormSet()
+    for ff in formset.forms:
+        ff.fields['Product'].queryset = Product.objects.filter(user=request.user)
+    if request.method == "POST":
+        form = nClientOrderForm(request.POST)
+        #oform = nOrderCForm(request.POST)
+        
+        if form.is_valid():
+            nC=form.save()
+            nC.Status = "en attente"
+            formset = OrderFormSet(request.POST, instance = nC)
+            if formset.is_valid():
+                o = formset.save()
+                tot=0
+                for i in o:
+                    print("-------type of o : " , type(i))
+                    tot=tot + (i.Quantity * i.Product.SalesPrice)
+                nC.Total=tot
+                nC.save()    
+                request.user.nclientorderlist.add(nC)
+                return redirect('order_client_list')
+    else:
+        productlist=request.user.productlist.all()
+        clientlist=request.user.clientlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "productlist": productlist,
+        "clientlist": clientlist,
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount,
+        
+        "formset": formset,
+        "form"  : form
+        }
+        context.update(info(request))
+        return render(request,'dashboard/neworders/newclient_order_create.html',context )
+
+def order_client_details(request, id):
+    obj=get_object_or_404(nClientOrder, id=id)
+    
+       
+    list_clients= request.user.clientlist.all()
+    Pcount= request.user.productlist.all().count()
+    Ccount= request.user.clientlist.all().count()
+    Scount= request.user.supplierlist.all().count()
+    context= {
+    "obj":obj,
+    "Pcount": Pcount,
+    "Ccount": Ccount,
+    "Scount": Scount,
+   
+    "list_clients" : list_clients
+    }
+    context.update(info(request))
+    return render(request,"dashboard/order/order_client_details.html",context)
