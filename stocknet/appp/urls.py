@@ -35,6 +35,7 @@ urlpatterns=[
     path('orderclient/<int:id>/edit/',views.order_client_edit,name='order_client_edit'),
     path('orderclient/<int:id>/delete/',views.order_client_delete,name='order_client_delete'),
     path('orderclient/<int:id>/details/',views.order_client_details,name='order_client_details'),
+    path('ordersupplier/<int:id>/details/',views.order_supplier_details,name='order_supplier_details'),
     path('orderclient/<int:id>/deliver/',views.order_client_deliver,name='order_client_deliver'),
     path('ordersupplier/<int:id>/deliver/',views.order_supplier_deliver,name='order_supplier_deliver'),
     path('ordersupplier/<int:id>/delete/',views.order_supplier_delete,name='order_supplier_delete'),

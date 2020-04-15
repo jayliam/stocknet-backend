@@ -45,3 +45,6 @@ class nOrderS(models.Model):
     Product         = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="norderslist", null=True) # <--- added
     Quantity        = models.DecimalField(decimal_places=2, max_digits=20, default=0, null=True)
     user            = models.ForeignKey(User, on_delete=models.CASCADE, related_name="norderslist", null=True) # <--- added
+    
+    def line_total(self):
+        return self.Quantity * self.Product.SalesPrice

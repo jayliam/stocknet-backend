@@ -11,7 +11,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.forms import inlineformset_factory
 
-from neworders.forms import nOrderCForm,nClientOrderForm
+from neworders.forms import nOrderCForm,nClientOrderForm,nSupplierOrderForm
 from neworders.models import nOrderS,nOrderC,nSupplierOrder,nClientOrder
 
 
@@ -69,16 +69,40 @@ def create_stock_track_client_confirm(request,order):
             b = True
             st = t
     if b : 
-        st.Stock = st.Stock - int(order.Product.Quantity)
+        st.Stock = st.Stock - int(stockoforderC(order))
         st.save()
     else:
         newTrack = StockTrack(
-            Stock = stocktraking.reverse()[0].Stock - order.Product.Quantity,
+            Stock = stocktraking.reverse()[0].Stock - stockoforderC(order),
             Date = order.Date
         )
         newTrack.save()
         request.user.stocktracklist.add(newTrack)
+
+def QoforderC(order):
+    listorder = order.norderclist.all()
+    t=0
+    for o in listorder:
+        t = t + o.Quantity   
+    return t
+
+def QoforderS(order):
+    listorder = order.norderslist.all()
+    t=0
+    for o in listorder:
+        t = t + o.Quantity   
+    return t
+
+def stockoforderC(order):
+    listorder = order.norderclist.all()
+    t=0
+    for o in listorder:
+        t = t + o.Product.Quantity   
+    return t
+     
+
 def create_stock_track_client(request,order):
+
     stocktraking = request.user.stocktracklist.order_by('Date')
     b = False
     for t in stocktraking:
@@ -86,7 +110,7 @@ def create_stock_track_client(request,order):
             b = True
             st = t
     if b : 
-        st.Stock = st.Stock - order.Quantity
+        st.Stock = st.Stock - QoforderC(order)
         st.save()
     else:
         if order.Date <  stocktraking.reverse()[0].Date :
@@ -96,9 +120,10 @@ def create_stock_track_client(request,order):
             )
         else :
             newTrack = StockTrack(
-                Stock = stocktraking.reverse()[0].Stock - order.Quantity,
+                Stock = stocktraking.reverse()[0].Stock - QoforderC(order),
                 Date = order.Date
             )
+
         newTrack.save()
         request.user.stocktracklist.add(newTrack)
 
@@ -110,18 +135,18 @@ def create_stock_track_supplier(request,order):
             b = True
             st = t
     if b : 
-        st.Stock = st.Stock + order.Quantity
+        st.Stock = st.Stock + QoforderS(order)
         st.save()
     else:
         if order.Date <  stocktraking.reverse()[0].Date :
             newTrack = StockTrack(
-                Stock = order.Quantity,
+                Stock = QoforderS(order),
                 Date = order.Date
             )
         else:    
             
             newTrack = StockTrack(
-                Stock = stocktraking.reverse()[0].Stock + order.Quantity  ,
+                Stock = stocktraking.reverse()[0].Stock + QoforderS(order)  ,
                 Date = order.Date
             )
             newTrack.save()
@@ -130,13 +155,13 @@ def create_stock_track_supplier(request,order):
 
 
 def info(request):
-    Ocount= request.user.clientorderlist.all().count()+request.user.supplierorderlist.all().count()
+    Ocount= request.user.nclientorderlist.all().count()+request.user.nsupplierorderlist.all().count()
     list_products= request.user.productlist.all()
     OScount= request.user.supplierorderlist.all().count()
     OCcount= request.user.clientorderlist.all().count()
 
-    OSPcount=list_order_suppliers= request.user.supplierorderlist.filter(Status='en attente').count()
-    OCPcount=list_order_clients= request.user.clientorderlist.filter(Status='en attente').count()
+    OSPcount=list_order_suppliers= request.user.nsupplierorderlist.filter(Status='en attente').count()
+    OCPcount=list_order_clients= request.user.nclientorderlist.filter(Status='en attente').count()
     
     strack=[]
     dtrack=[]
@@ -380,8 +405,7 @@ def product_edit(request, id):
     list_suppliers_obj=[]
     for s in obj.Suppliers.all():
         list_suppliers_obj.append(s.Name)
-        print(list_suppliers_obj)
-        print("*************************")
+
     
     context = {
         "list_suppliers" : list_suppliers,
@@ -920,10 +944,9 @@ def PendingOrders_list(request):
     if request.method == 'POST':
         selectedlist = request.POST.getlist('selectedlist')
     
-
     else:
-        list_order_suppliers= request.user.supplierorderlist.filter(Status='en attente')
-        list_order_clients= request.user.clientorderlist.filter(Status='en attente')
+        list_order_suppliers= request.user.nsupplierorderlist.filter(Status='en attente')
+        list_order_clients= request.user.nclientorderlist.filter(Status='en attente')
 
         Pcount= request.user.productlist.all().count()
         Ccount= request.user.clientlist.all().count()
@@ -937,6 +960,7 @@ def PendingOrders_list(request):
         }
         context.update(info(request))
         return render(request,"dashboard/order/pendingOrders_list.html",context)
+        
 def order_client_list(request):
     if request.method == 'POST':
         selectedlist = request.POST.getlist('selectedlist')
@@ -986,16 +1010,39 @@ def order_pending_list(request):
         return render(request,"dashboard/order/order_client_list.html",context)
 
 def order_supplier_list(request):
+    # if request.method == 'POST':
+    #     selectedlist = request.POST.getlist('selectedlist')
+
+    #     for i in selectedlist:
+    #         obj = SupplierOrder.objects.get(id=int(i))
+    #         obj.delete() 
+    #     return redirect('order_supplier_list')      
+
+    # else:
+    #     list_order_suppliers= request.user.supplierorderlist.all()
+    #     Pcount= request.user.productlist.all().count()
+    #     Ccount= request.user.clientlist.all().count()
+    #     Scount= request.user.supplierlist.all().count()
+    #     context= {
+    #     "Pcount": Pcount,
+    #     "Ccount": Ccount,
+    #     "Scount": Scount,
+    #     "list_order_suppliers" : list_order_suppliers
+    #     }
+    #     context.update(info(request))
+    #     return render(request,"dashboard/order/order_supplier_list.html",context)
     if request.method == 'POST':
         selectedlist = request.POST.getlist('selectedlist')
 
         for i in selectedlist:
-            obj = SupplierOrder.objects.get(id=int(i))
+            #obj = ClientOrder.objects.get(id=int(i))
+            obj = nSupplierOrder.objects.get(id=int(i))
             obj.delete() 
         return redirect('order_supplier_list')      
 
     else:
-        list_order_suppliers= request.user.supplierorderlist.all()
+        #list_order_clients= request.user.clientorderlist.all()
+        list_order_supplier= request.user.nsupplierorderlist.all()
         Pcount= request.user.productlist.all().count()
         Ccount= request.user.clientlist.all().count()
         Scount= request.user.supplierlist.all().count()
@@ -1003,13 +1050,12 @@ def order_supplier_list(request):
         "Pcount": Pcount,
         "Ccount": Ccount,
         "Scount": Scount,
-        "list_order_suppliers" : list_order_suppliers
+        "list_order_supplier" : list_order_supplier
         }
         context.update(info(request))
         return render(request,"dashboard/order/order_supplier_list.html",context)
 
-
-def order_client_create(request):
+def nClientOrder_create(request):
     if request.method == 'POST':
         
         P = request.POST['product']
@@ -1076,71 +1122,112 @@ def order_client_create(request):
         return render(request,"dashboard/order/order_client_create.html",context)
 
 def order_supplier_create(request):
-    if request.method == 'POST':
+    # if request.method == 'POST':        
+    #     P = request.POST['product']
+    #     Pobj = Product.objects.get(id=P)
+    #     Pobj.save() 
+    #     S = request.POST['supplier']
+    #     Sobj = Supplier.objects.get(id=S)
+    #     Sobj.save()
+    #     Quantity = request.POST['quantity']
+    #     Date = request.POST['date']
+    #     Status = "en attente"
+    #     Total = float(Quantity) * float(Pobj.PurchasePrice)
+    #     error= False
+    #     if not Product : 
+    #         messages.info(request,'Le champ Product ne peut pas etre vide')
+    #         error=True
+    #     if not Client : 
+    #         messages.info(request,'Le champ Supplier  ne peut pas etre vide')
+    #         error=True
+    #     if not Quantity : 
+    #         messages.info(request,'Le champ Quantity ne peut pas etre vide')
+    #         error=True
+    #     if not Date : 
+    #         messages.info(request,'Le champ Date ne peut pas etre vide')
+    #         error=True
         
-        P = request.POST['product']
-        Pobj = Product.objects.get(id=P)
-        Pobj.save() 
-        S = request.POST['supplier']
-        Sobj = Supplier.objects.get(id=S)
-        Sobj.save()
-
-
-        Quantity = request.POST['quantity']
-        Date = request.POST['date']
-        Status = "en attente"
-        Total = float(Quantity) * float(Pobj.PurchasePrice)
-        error= False
-        if not Product : 
-            messages.info(request,'Le champ Product ne peut pas etre vide')
-            error=True
-        if not Client : 
-            messages.info(request,'Le champ Supplier  ne peut pas etre vide')
-            error=True
-        if not Quantity : 
-            messages.info(request,'Le champ Quantity ne peut pas etre vide')
-            error=True
-        if not Date : 
-            messages.info(request,'Le champ Date ne peut pas etre vide')
-            error=True
-        
-        if error:
-            return redirect('order_supplier_create')
+    #     if error:
+    #         return redirect('order_supplier_create')
        
-        sOrder = SupplierOrder(
-            Quantity = Quantity,
-            Date = Date,
-            Total = Total,
-            Status = Status
-        )
-        sOrder.save()
+    #     sOrder = SupplierOrder(
+    #         Quantity = Quantity,
+    #         Date = Date,
+    #         Total = Total,
+    #         Status = Status
+    #     )
+    #     sOrder.save()
         
-        request.user.supplierorderlist.add(sOrder)
-        Pobj.supplierorderlist.add(sOrder)
-        Sobj.supplierorderlist.add(sOrder)
+    #     request.user.supplierorderlist.add(sOrder)
+    #     Pobj.supplierorderlist.add(sOrder)
+    #     Sobj.supplierorderlist.add(sOrder)
 
-        messages.info(request,'Commande Ajouté')
+    #     messages.info(request,'Commande Ajouté')
         
-        return redirect('order_supplier_list')
+    #     return redirect('order_supplier_list')
 
+    # else:
+    #     productlist=request.user.productlist.all()
+    #     supplierlist=request.user.supplierlist.all()
+    #     Pcount= request.user.productlist.all().count()
+    #     Ccount= request.user.clientlist.all().count()
+    #     Scount= request.user.supplierlist.all().count()
+    #     context= {
+    #     "productlist": productlist,
+    #     "supplierlist": supplierlist,
+    #     "Pcount": Pcount,
+    #     "Ccount": Ccount,
+    #     "Scount": Scount
+    #     }
+    #     context.update(info(request))
+    #     return render(request,"dashboard/order/order_supplier_create.html",context)
+
+    OrderFormSet = inlineformset_factory( nSupplierOrder,nOrderS, fields = ('Product', 'Quantity',  ),extra= 10 )
+    form = nSupplierOrderForm()
+    form.fields['Supplier'].queryset = Supplier.objects.filter(user=request.user)
+    #oform = nOrderCForm() 
+    formset = OrderFormSet()
+    for ff in formset.forms:
+        ff.fields['Product'].queryset = Product.objects.filter(user=request.user)
+        ff.fields['Product'].label = "Produit"
+        ff.fields['Quantity'].label = "Quantité"
+    if request.method == "POST":
+        form = nSupplierOrderForm(request.POST)
+        if form.is_valid():
+            nC=form.save()
+            nC.Status = "en attente"
+            formset = OrderFormSet(request.POST, instance = nC)
+            if formset.is_valid():
+                o = formset.save()
+                tot=0
+                for i in o:
+
+                    tot=tot + (i.Quantity * i.Product.SalesPrice)
+                nC.Total=tot
+                nC.save()    
+                request.user.nsupplierorderlist.add(nC)
+                return redirect('order_supplier_list')
     else:
         productlist=request.user.productlist.all()
-        supplierlist=request.user.supplierlist.all()
+        clientlist=request.user.clientlist.all()
         Pcount= request.user.productlist.all().count()
         Ccount= request.user.clientlist.all().count()
         Scount= request.user.supplierlist.all().count()
         context= {
         "productlist": productlist,
-        "supplierlist": supplierlist,
+        "clientlist": clientlist,
         "Pcount": Pcount,
         "Ccount": Ccount,
-        "Scount": Scount
+        "Scount": Scount,
+        
+        "formset": formset,
+        "form"  : form
         }
         context.update(info(request))
         return render(request,"dashboard/order/order_supplier_create.html",context)
 
 
-def order_supplier_edit(request,id):
+def order_supplier_edittttt(request,id):
     obj = get_object_or_404(SupplierOrder, id=id)
     if request.method == 'POST':
         P = request.POST['product']
@@ -1208,7 +1295,7 @@ def order_supplier_edit(request,id):
         context.update(info(request))
         return render(request,"dashboard/order/order_supplier_edit.html",context)
 
-def order_client_edit(request,id):
+def order_client_edittts(request,id):
     obj = get_object_or_404(ClientOrder, id=id)
     if request.method == 'POST':
         P = request.POST['product']
@@ -1299,9 +1386,12 @@ def order_client_delete(request, id):
         return render(request,"dashboard/order/order_client_delete.html",context)
 def order_supplier_deliver(request, id):
 
-    order=get_object_or_404(SupplierOrder, id=id)
-    order.Product.Quantity=order.Product.Quantity+order.Quantity
-    order.Product.save()
+    order=get_object_or_404(nSupplierOrder, id=id)
+    listorder = order.norderslist.all()
+    for o in listorder : 
+        o.Product.Quantity=o.Product.Quantity + o.Quantity
+        o.Product.save()
+
     order.Status='livré'
     order.save()
     create_stock_track_supplier(request,order)
@@ -1310,13 +1400,19 @@ def order_supplier_deliver(request, id):
 
 
 def order_client_deliver(request, id):
-    order=get_object_or_404(ClientOrder, id=id)
-    if order.Quantity > order.Product.Quantity:
-        return redirect('order_client_deliver_confirm',id=id)
+    order=get_object_or_404(nClientOrder, id=id)
+    listorder = order.norderclist.all()
+    for o in listorder : 
+        if o.Quantity > o.Product.Quantity: 
+            return redirect('order_client_deliver_confirm',id=id)
+
+
 
     else:
-        order.Product.Quantity=order.Product.Quantity-order.Quantity
-        order.Product.save()
+        for o in listorder : 
+            o.Product.Quantity=o.Product.Quantity-o.Quantity
+            o.Product.save()
+        
         order.Status='livré'
         order.save()
         create_stock_track_client(request,order)
@@ -1324,7 +1420,7 @@ def order_client_deliver(request, id):
         return redirect('order_client_list')
        
 def order_client_deliver_confirm(request, id):
-    order=get_object_or_404(ClientOrder, id=id)
+    order=get_object_or_404(nClientOrder, id=id)
     if request.method == "POST":
         create_stock_track_client_confirm(request,order)
         order.Product.Quantity=order.Product.Quantity-order.Quantity
@@ -1349,7 +1445,7 @@ def order_client_deliver_confirm(request, id):
         return render(request,"dashboard/order/order_client_deliver_confirm.html",context)
        
 def order_supplier_delete(request, id):
-    obj=get_object_or_404(SupplierOrder, id=id)
+    obj=get_object_or_404(nSupplierOrder, id=id)
     if request.method == "POST":
         obj.delete()
         return redirect('order_supplier_list')
@@ -1383,17 +1479,17 @@ def learnmore(request):
     return render(request,"learnmore.html",{})
 
 
-def nClientOrder_create(request):
+def order_client_create(request):
     OrderFormSet = inlineformset_factory( nClientOrder,nOrderC, fields = ('Product', 'Quantity',  ),extra= 10 )
     form = nClientOrderForm()
     #oform = nOrderCForm() 
     formset = OrderFormSet()
     for ff in formset.forms:
         ff.fields['Product'].queryset = Product.objects.filter(user=request.user)
+        ff.fields['Product'].label = "Produit"
+        ff.fields['Quantity'].label = "Quantité"
     if request.method == "POST":
         form = nClientOrderForm(request.POST)
-        #oform = nOrderCForm(request.POST)
-        
         if form.is_valid():
             nC=form.save()
             nC.Status = "en attente"
@@ -1402,7 +1498,7 @@ def nClientOrder_create(request):
                 o = formset.save()
                 tot=0
                 for i in o:
-                    print("-------type of o : " , type(i))
+
                     tot=tot + (i.Quantity * i.Product.SalesPrice)
                 nC.Total=tot
                 nC.save()    
@@ -1425,11 +1521,10 @@ def nClientOrder_create(request):
         "form"  : form
         }
         context.update(info(request))
-        return render(request,'dashboard/neworders/newclient_order_create.html',context )
+        return render(request,"dashboard/order/order_client_create.html",context)
 
 def order_client_details(request, id):
     obj=get_object_or_404(nClientOrder, id=id)
-    
        
     list_clients= request.user.clientlist.all()
     Pcount= request.user.productlist.all().count()
@@ -1445,3 +1540,125 @@ def order_client_details(request, id):
     }
     context.update(info(request))
     return render(request,"dashboard/order/order_client_details.html",context)
+
+def order_supplier_details(request, id):
+    obj=get_object_or_404(nSupplierOrder , id=id)
+       
+    list_clients= request.user.clientlist.all()
+    Pcount= request.user.productlist.all().count()
+    Ccount= request.user.clientlist.all().count()
+    Scount= request.user.supplierlist.all().count()
+    context= {
+    "obj":obj,
+    "Pcount": Pcount,
+    "Ccount": Ccount,
+    "Scount": Scount,
+   
+    "list_clients" : list_clients
+    }
+    context.update(info(request))
+    return render(request,"dashboard/order/order_supplier_details.html",context)
+
+
+
+def order_client_edit(request,id):
+    obj = get_object_or_404(nClientOrder, id=id)
+    
+    OrderFormSet = inlineformset_factory( nClientOrder,nOrderC, fields = ('Product', 'Quantity',  ),extra= 10 )
+    form = nClientOrderForm(instance=obj)
+    formset = OrderFormSet()
+    for ff in formset.forms:
+        ff.fields['Product'].queryset = Product.objects.filter(user=request.user)
+        ff.fields['Product'].label = "Produit"
+        ff.fields['Quantity'].label = "Quantité"
+    if request.method == 'POST':
+        Status = request.POST['status']
+        form = nClientOrderForm(request.POST,instance= obj)
+        if form.is_valid():
+            nC=form.save()
+            nC.Status = Status
+            formset = OrderFormSet(request.POST, instance = nC)
+            if formset.is_valid():
+                #delete older orders before updating
+                o = obj.norderclist.all()
+                for ob in o:
+                    ob.delete()
+                formset.save()
+                o = obj.norderclist.all()
+                tot=0
+                for i in o:
+                    tot=tot + (i.Quantity * i.Product.SalesPrice)
+                nC.Total=tot
+                nC.save()    
+                request.user.nclientorderlist.add(nC)
+                return redirect('order_client_list')
+    else: 
+        productlist=request.user.productlist.all()
+        clientlist=request.user.clientlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "productlist": productlist,
+        "clientlist": clientlist,
+        "obj": obj,
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "form": form,
+        "formset": formset,
+        "Scount": Scount
+        }
+        context.update(info(request))
+        return render(request,"dashboard/order/order_client_edit.html",context)
+
+def order_supplier_edit(request,id):
+    obj = get_object_or_404(nSupplierOrder, id=id)
+    OrderFormSet = inlineformset_factory( nSupplierOrder,nOrderS, fields = ('Product', 'Quantity',  ),extra= 10 )
+    form = nSupplierOrderForm(instance=obj)
+    formset = OrderFormSet()
+    for ff in formset.forms:
+        ff.fields['Product'].queryset = Product.objects.filter(user=request.user)
+        ff.fields['Product'].label = "Produit"
+        ff.fields['Quantity'].label = "Quantité"
+    if request.method == 'POST': 
+        Status = request.POST['status']
+        form = nSupplierOrderForm(request.POST,instance= obj)
+        if form.is_valid():
+            nC=form.save()
+            nC.Status = Status
+            formset = OrderFormSet(request.POST, instance = nC)
+            print("we here 1111111Z33")
+            if formset.is_valid():
+                print("we here 22222222Z33" ,request.POST)
+                #delete older orders before updating
+                o = obj.norderslist.all()
+                for ob in o:
+                    ob.delete()
+                formset.save()
+                o = obj.norderslist.all()
+                tot=0
+                for i in o:
+                    tot=tot + (i.Quantity * i.Product.SalesPrice)
+                nC.Total=tot
+                nC.save()    
+                request.user.nsupplierorderlist.add(nC)
+                return redirect('order_supplier_list')
+            
+    else: 
+        productlist=request.user.productlist.all()
+        clientlist=request.user.clientlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "productlist": productlist,
+        "clientlist": clientlist,
+        "obj": obj,
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "form": form,
+        "formset": formset,
+        "Scount": Scount
+        }
+        context.update(info(request))
+        return render(request,"dashboard/order/order_supplier_edit.html",context)

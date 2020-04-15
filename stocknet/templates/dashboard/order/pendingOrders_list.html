@@ -34,6 +34,7 @@
                                     <th>Quantité</th>
                                     <th>Date</th>
                                     <th>Etat</th>
+                                    <th>Details</th>
                                     <th>Livrer</th>
                                     <th>Supprimer</th>
                                     <th>Modifier</th>
@@ -53,6 +54,7 @@
                                               {% endlanguage %}  
                                         </td>
                                         <td>{{ entry.Status }}</td>
+                                        <td><a class=" text-info btn btn-info"  href="/ordersupplier/{{ entry.id }}/details">  Details</a></td>
                                         <td><a class=" text-success btn btn-success"  href="/ordersupplier/{{ entry.id }}/deliver">  Livrer</a></td>
 
                                         <td><a class=" text-danger btn btn-danger"  href="/ordersupplier/{{ entry.id }}/delete">  Supprimer</a></td>
@@ -91,6 +93,7 @@
                                     <th>Quantité</th>
                                     <th>Date</th>
                                     <th>Etat</th>
+                                    <th>Details</th>
                                     <th>Livrer</th>
                                     <th>Supprimer</th>
                                     <th>Modifier</th>
@@ -110,6 +113,7 @@
                                               {% endlanguage %}  
                                         </td>
                                         <td>{{ entry.Status }}</td>
+                                        <td><a class=" text-info btn btn-info"  href="/orderclient/{{ entry.id }}/details">  Details</a></td>
                                         <td><a class=" text-success btn btn-success"  href="/orderclient/{{ entry.id }}/deliver">  Livrer</a></td>
                                         
                                         <td><a class=" text-danger btn btn-danger "  href="/orderclient/{{ entry.id }}/delete">  Supprimer</a></td>

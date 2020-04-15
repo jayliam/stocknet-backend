@@ -3,60 +3,42 @@
 {% block deactive %}  {% endblock %}
 {% block activeorder %} active {% endblock %}
 {% block content %}
-
+{% load crispy_forms_tags %}
 <div class="container-fluid">
     <div class="section">
-       <div class="col-md-8">
+              <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="font-weight-normal ml-1 mx-auto" >  Ajouter une commande fournisseur  </h3><br> 
+                    <h3 class="font-weight-normal ml-1 mx-auto" >  Ajouter une commande Fournisseur  </h3><br> 
                 </div>
                 <div class="card-body mr-3 ">
                     <form  method="POST"> {% csrf_token %}
+                        {{form|crispy}}
+                        <hr>
+                        {{ formset.management_form  }}
+                        {% for f in formset %}
                         <div class="row">
-                            
-                            <div class="col-md-6 mt-4 ">
+                            <div class="col-md-6 pr-1">
                                 <div class="form-group">
-                                    <label>Produit</label>
-                                    <select class="custom-select" id="product" name="product">
-                                        {% for p in productlist %}
-                                        <option value="{{p.id}}">{{p}}</option>
-                                         {% endfor %}     
-                                    </select>       
-                                </div> 
-                            </div>
-                            <div class="col-md-6 mt-4 ">
-                                <div class="form-group">
-                                    <label>fournisseur</label>
-                                    <select class="custom-select" id="supplier" name="supplier">
-                                        {% for s in supplierlist %}
-                                        <option value="{{s.id}}">{{s}}</option>
-                                         {% endfor %}     
-                                    </select>       
-                                </div> 
-                            </div>
-                            
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 pr-1 ">
-                                <div class="form-group">
-                                    <label>Quantité</label>
-                                    <input type="number" name="quantity" class="form-control" >
+                                    
+                                    {{f.Product|as_crispy_field }}
                                 </div>
                             </div>
-                            
-                        </div>
-                        <div class="row">
-                            
-                            <div class="col-md-12 pr-1">
+                            <div class="col-md-6 pr-1">
                                 <div class="form-group">
-                                    <label>Date</label>
-                                    <input type="date" name="date" class="form-control" >
+                                    
+                                    {{f.Quantity|as_crispy_field }}
                                 </div>
                             </div>
+                        </div>
+                            
+                            
+                            <hr>
+                        {% endfor %}
+                       
                             
 
-                        </div>
+                
                   
                         
                         {% for message in messages %}              
@@ -69,8 +51,6 @@
                 </div>
             </div>
         </div>
-
-    </div>
 
 </div>
 

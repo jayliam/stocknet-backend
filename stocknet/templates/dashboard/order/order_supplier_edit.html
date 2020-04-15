@@ -1,58 +1,20 @@
 {% extends 'dashboard/dashboard.html' %}
 {% block deactive %}  {% endblock %}
 {% block activeorder %} active {% endblock %}
-{% block content %}
 {% load i18n %}
+{% block content %}
+{% load crispy_forms_tags %}
 
 <div class="container-fluid">
     <div class="section">
        <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="font-weight-normal ml-1 mx-auto" >  Modifier une commande fournisseur  </h3><br> 
+                    <h3 class="font-weight-normal ml-1 mx-auto" >  Modifier une commande Fournisseur  </h3><br> 
                 </div>
                 <div class="card-body mr-3 ">
                     <form  method="POST"> {% csrf_token %}
-                        <div class="row">
-                            
-                            <div class="col-md-6 mt-4 ">
-                                <div class="form-group">
-                                    <label>Produit</label>
-                                    <select class="custom-select" id="product" name="product">
-                                        {% for p in productlist %}
-                                            {% if obj.Product.id == p.id %}
-                                                <option selected value="{{p.id}}">{{p}}</option>
-                                            {% else %}
-                                                <option value="{{p.id}}">{{p}}</option>
-                                            {% endif %}
-                                        {% endfor %}     
-                                    </select>       
-                                </div> 
-                            </div>
-                            <div class="col-md-6 mt-4 ">
-                                <div class="form-group">
-                                    <label>fournisseur</label>
-                                    <select class="custom-select" id="supplier" name="supplier">
-                                        {% for s in supplierlist %}
-                                            {% if obj.Supplier.id == s.id %}
-                                                <option selected value="{{s.id}}">{{s}}</option>
-                                            {% else %}  
-                                                <option value="{{s.id}}">{{s}}</option> 
-                                            {% endif %} 
-                                        {% endfor %}     
-                                    </select>       
-                                </div> 
-                            </div>
-                            
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 pr-1 ">
-                                <div class="form-group">
-                                    <label>Quantité</label>
-                                    <input type="number" value="{{ obj.Quantity }}" name="quantity" class="form-control" >
-                                </div>
-                            </div>
-                            <div class="col-md-6 pr-1 ">
+                            <div class="col-md-12  ">
                                 <div class="form-group">
                                     <label>Etat</label>
                                     <select class="custom-select" id="status" name="status">
@@ -66,19 +28,30 @@
                                     </select>     
                                 </div>
                             </div>
-                        </div>
+
+                            
+                        {{form|crispy}}
+                        <hr>
+                        {{ formset.management_form  }}
+                        {% for f in formset %}
                         <div class="row">
-                        {% language 'fr' %}    
-                            <div class="col-md-12 pr-1">
+                            <div class="col-md-6 pr-1">
                                 <div class="form-group">
-                                    <label>Date: {{obj.Date}} </label>
-                                    <input type="date" name="date" class="form-control" >
+                                    
+                                    {{f.Product|as_crispy_field }}
                                 </div>
                             </div>
-                        {% endlanguage %}     
-
+                            <div class="col-md-6 pr-1">
+                                <div class="form-group">
+                                    
+                                    {{f.Quantity|as_crispy_field }}
+                                </div>
+                            </div>
                         </div>
-                  
+                            
+                            
+                            <hr>
+                        {% endfor %}
                         
                         {% for message in messages %}              
                         <h6 class="text-danger small">{{message}}</h6>
