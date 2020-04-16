@@ -1402,17 +1402,16 @@ def order_supplier_deliver(request, id):
 def order_client_deliver(request, id):
     order=get_object_or_404(nClientOrder, id=id)
     listorder = order.norderclist.all()
+    b = False
     for o in listorder : 
         if o.Quantity > o.Product.Quantity: 
-            return redirect('order_client_deliver_confirm',id=id)
-
-
-
+            b = True   
+    if b:
+        return redirect('order_client_deliver_confirm',id=id)
     else:
         for o in listorder : 
             o.Product.Quantity=o.Product.Quantity-o.Quantity
             o.Product.save()
-        
         order.Status='livré'
         order.save()
         create_stock_track_client(request,order)
@@ -1421,10 +1420,14 @@ def order_client_deliver(request, id):
        
 def order_client_deliver_confirm(request, id):
     order=get_object_or_404(nClientOrder, id=id)
+    listorder = order.norderclist.all()
     if request.method == "POST":
         create_stock_track_client_confirm(request,order)
-        order.Product.Quantity=order.Product.Quantity-order.Quantity
-        order.Product.save()
+        listorder = order.norderclist.all()
+        for o in listorder : 
+            o.Product.Quantity=o.Product.Quantity-o.Quantity
+            o.Product.save()
+        
         order.Status='livré'
         order.save()
         
@@ -1436,6 +1439,7 @@ def order_client_deliver_confirm(request, id):
         Scount= request.user.supplierlist.all().count()
         context= {
         "obj":order,
+        "listorder":listorder,
         "Pcount": Pcount,
         "Ccount": Ccount,
         "Scount": Scount,

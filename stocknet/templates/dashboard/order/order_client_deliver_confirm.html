@@ -14,12 +14,41 @@
                 </div>
                 <div class="card-body mr-3 ">
                     <form  method="POST"> {% csrf_token %}
-                    <h4>
-                        <br> Client: {{obj.Client}} 
-                        <br>produit: {{obj.Product}} 
-                        <br> quantité:  {{obj.Quantity}}
+
+                    <h4 class="font-weight-normal" ><br>  Client: {{obj.Client}} </h4>
+                        <table class="table table-hover table-striped">
+                        <thead>
+                            <th>Produit</th>
+                            <th>Prix de vente</th>
+                            <th>Quantité</th>
+                            <th>Total</th>
+                    
+                            
+                        </thead>
+                        <tbody>
+                        
+                        {% for o in listorder %}
+                            <tr>
+
+                                <td>{{o.Product}}</td>
+                                <td>{{o.Product.SalesPrice}}</td>
+                                <td>{{o.Quantity}}</td>
+                                <td>{{ o.line_total  }}</td>
+
+                            </tr>
+                        {% endfor %}
+                        <tr>
+
+                            <td> </td>
+                            <td> </td>
+                            <td> Grand Total </td>
+                            <td>{{ obj.Total  }}</td>
+
+                        </tr>
+                        </tbody>
+                    </table>
         
-                    </h4>
+                    
                     <h3 class="text-warning" ><br> le stock sera negatif</h3>
                     {% comment %} <button type="submit" class="btn-bg mt btn btn-danger btn-fill pull-right">Supprimer </button> {% endcomment %}
                     <button type="submit" class="btn btn-success mt-3 mb-3 pull-right">Confirmer </button>
