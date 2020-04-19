@@ -61,6 +61,28 @@ def product_stock_track(product,request):
         newTrack.save()
         request.user.stocktracklist.add(newTrack)
 
+def delete_product_stock_track(product,request):
+    today=timezone.now().date()
+    stocktraking = request.user.stocktracklist.order_by('Date')
+    if stocktraking.count() > 0:
+        b= False
+        for t in stocktraking:
+            if t.Date == today:
+                b=True
+                st=t
+        if b:
+            st.Stock = int(st.Stock) - int(product.Quantity)
+            st.save()
+        else:
+            newTrack = StockTrack(
+                Stock = int(stocktraking.reverse()[0].Stock) - int(product.Quantity),
+                Date = today
+            )
+
+            newTrack.save()
+            request.user.stocktracklist.add(newTrack)
+    
+
 def create_stock_track_client_confirm(request,order):
     stocktraking = request.user.stocktracklist.order_by('Date')
     b = False
@@ -490,6 +512,7 @@ def product_list(request):
         for i in selectedlist:
             #obj=get_object_or_404(Product, id=int(i))
             obj = Product.objects.get(id=int(i))
+            delete_product_stock_track(obj,request)
             obj.delete() 
         return redirect('product_list')      
 

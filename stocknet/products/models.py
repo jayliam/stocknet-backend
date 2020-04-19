@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 class Product(models.Model):
     Title         = models.CharField(max_length=100)
-    Description   = models.CharField(max_length=100, null = True)
+    Description   = models.CharField(max_length=300, null = True)
     PurchasePrice = models.DecimalField(decimal_places=2, max_digits=20,default=0)
     SalesPrice    = models.DecimalField(decimal_places=2, max_digits=20,default=0)
     Reference     = models.CharField(max_length=100)

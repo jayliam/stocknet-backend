@@ -5,6 +5,14 @@
 
 
 {% block content %}
+<script language="JavaScript">
+function toggle(source) {
+  checkboxes = document.getElementsByName('selectedlist');
+  for(var i=0, n=checkboxes.length;i<n;i++) {
+    checkboxes[i].checked = source.checked;
+  }
+}
+</script>
 <div class="container-fluid">
                     <div class="section">
 
@@ -28,7 +36,7 @@
                             </div> 
                             <table class="table table-hover table-striped">
                                 <thead>
-                                    <th>Select</th>
+                                    <th><input type="checkbox" onClick="toggle(this)" /><br/></th>
                                     <th>Type</th>
                                     <th>Nom</th>
                                     <th>Telephone</th>
@@ -61,7 +69,7 @@
 
                                     </tr>
                                 {% endfor %}
-                                <button type="submit" class="btn btn-danger  ">Supprimer  </button> 
+                                <button type="submit" class="btn btn-danger  "><i class="fa-lg fa fa-trash"></i></button> 
                                 </form>     
                                 </tbody>
                             </table>
