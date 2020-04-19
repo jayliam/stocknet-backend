@@ -179,8 +179,8 @@ def create_stock_track_supplier(request,order):
 def info(request):
     Ocount= request.user.nclientorderlist.all().count()+request.user.nsupplierorderlist.all().count()
     list_products= request.user.productlist.all()
-    OScount= request.user.supplierorderlist.all().count()
-    OCcount= request.user.clientorderlist.all().count()
+    OScount= request.user.nsupplierorderlist.all().count()
+    OCcount= request.user.nclientorderlist.all().count()
 
     OSPcount=list_order_suppliers= request.user.nsupplierorderlist.filter(Status='en attente').count()
     OCPcount=list_order_clients= request.user.nclientorderlist.filter(Status='en attente').count()
@@ -1511,6 +1511,7 @@ def order_client_create(request):
     form = nClientOrderForm()
     #oform = nOrderCForm() 
     formset = OrderFormSet()
+    form.fields['Client'].queryset = Client.objects.filter(user=request.user)
     for ff in formset.forms:
         ff.fields['Product'].queryset = Product.objects.filter(user=request.user)
         ff.fields['Product'].label = "Produit"
