@@ -32,11 +32,11 @@ function toggle(source) {
 
                             {% endfor %} 
                             <div class="row">
-                                <div class="col-md-10" >
+                                <div class="col-md-8" >
                                     <h2 class="font-weight-normal" >Liste Des commandes Fournisseur</h2>
 
                                 </div>
-                                <div class="col-md-2" >
+                                <div class="col-md-4" >
                                     <a class="btn  btn-bg mt-4" href="/order_supplier_create">
                                         Ajouter commande Fournisseur
                                     </a>
@@ -85,7 +85,50 @@ function toggle(source) {
 
                                     </tr>
                                 {% endfor %}
-                                <button type="submit" class="btn btn-danger  "><i class="fa-lg fa fa-trash"></i></button> 
+                                <div class="container">
+                                <div class="row">
+                                <div class="col-md-1 mt-4">
+                                    <button type="submit " class=" btn btn-danger  "><i class="fa-lg fa fa-trash"></i></button>       
+                                </div>
+                                </form>
+                                <form method="GET" action="." >
+                                            <div class="col-sm">  
+                                                <label>De</label>
+                                                <input type="date" class="form-control" name="de" id="dateFrom" value="2020-01-01" />
+                                            </div>
+
+                                            <div class="col-sm">                                    
+                                                <label>Vers</label>
+                                                <input type="date" class="form-control" name="vers" id="dateTo" value="2020-12-12"/>                                                                            
+                                            </div>
+                                            <div class="col-sm">                                    
+                                                <label>Fournisseur</label>
+                                                <select class="custom-select" id="type" name="supplier">
+                                                    <option value="-------">-------</option>
+                                                    {% for c in lssupplier %}
+                                                        <option value="{{c.id}}">{{c}}</option> 
+                                                    {% endfor %}    
+                                                </select>                                              
+                                            </div>
+                                            <div class="col-sm">                                    
+                                                <label>Etat</label>
+                                                <select class="custom-select" id="type" name="status">
+                                                    <option value="-------">-------</option>
+                                                    <option value="en attente">en attente</option>
+                                                    <option value="livré">livré</option>
+                                      
+                                                </select>                                              
+                                            </div>
+
+                                            <div class="col-md-3 mt-4">
+                                                    <button class="btn btn-primary" type="submit" id="getJsonSrc"><i class="fa fa-search"></i></button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </form>  
+                                <br> 
+                                <br>  
                                 </form>     
                                 </tbody>
                             </table>

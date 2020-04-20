@@ -997,13 +997,30 @@ def order_client_list(request):
     else:
         #list_order_clients= request.user.clientorderlist.all()
         list_order_clients= request.user.nclientorderlist.all()
+        lsclient=[]
+        for o in list_order_clients:
+            if o.Client not in lsclient:  #zebi
+                lsclient.append(o.Client)
+         
         Pcount= request.user.productlist.all().count()
         Ccount= request.user.clientlist.all().count()
         Scount= request.user.supplierlist.all().count()
+        clientt = request.GET.get('client')
+        status = request.GET.get('status')
+        date_de = request.GET.get('de')
+        date_vers = request.GET.get('vers')
+        if clientt is not None and clientt != "-------":
+            list_order_clients = list_order_clients.filter(Client=clientt)
+        if status is not None and status != "-------":
+            list_order_clients = list_order_clients.filter(Status=status)
+        if date_de is not None:
+            if date_vers is not None:
+                list_order_clients = list_order_clients.filter(Date__gte=date_de,Date__lte=date_vers)
         context= {
         "Pcount": Pcount,
         "Ccount": Ccount,
         "Scount": Scount,
+        "lsclient": lsclient,
         "list_order_clients" : list_order_clients
         }
         context.update(info(request))
@@ -1064,15 +1081,34 @@ def order_supplier_list(request):
         return redirect('order_supplier_list')      
 
     else:
+        
         #list_order_clients= request.user.clientorderlist.all()
         list_order_supplier= request.user.nsupplierorderlist.all()
         Pcount= request.user.productlist.all().count()
         Ccount= request.user.clientlist.all().count()
         Scount= request.user.supplierlist.all().count()
+        lssupplier=[]
+        for o in list_order_supplier:
+            if o.Supplier not in lssupplier:  #zebi
+                lssupplier.append(o.Supplier)
+
+        status = request.GET.get('status')
+        supplier = request.GET.get('supplier')
+        date_de = request.GET.get('de')
+        date_vers = request.GET.get('vers')
+        if status is not None and status != "-------":
+            list_order_supplier = list_order_supplier.filter(Status=status)
+        if supplier is not None and supplier != "-------":
+            list_order_supplier = list_order_supplier.filter(Supplier=supplier)
+        if date_de is not None:
+            if date_vers is not None:
+                list_order_supplier = list_order_supplier.filter(Date__gte=date_de,Date__lte=date_vers)
+
         context= {
         "Pcount": Pcount,
         "Ccount": Ccount,
         "Scount": Scount,
+        "lssupplier": lssupplier,
         "list_order_supplier" : list_order_supplier
         }
         context.update(info(request))
@@ -1599,6 +1635,8 @@ def order_client_edit(request,id):
         ff.fields['Product'].queryset = Product.objects.filter(user=request.user)
         ff.fields['Product'].label = "Produit"
         ff.fields['Quantity'].label = "Quantité"
+        
+    
     if request.method == 'POST':
         Status = request.POST['status']
         form = nClientOrderForm(request.POST,instance= obj)
@@ -1606,6 +1644,7 @@ def order_client_edit(request,id):
             nC=form.save()
             nC.Status = Status
             formset = OrderFormSet(request.POST, instance = nC)
+
             if formset.is_valid():
                 #delete older orders before updating
                 o = obj.norderclist.all()
@@ -1620,7 +1659,8 @@ def order_client_edit(request,id):
                 nC.save()    
                 request.user.nclientorderlist.add(nC)
                 return redirect('order_client_list')
-    else: 
+    else:
+        
         productlist=request.user.productlist.all()
         clientlist=request.user.clientlist.all()
         Pcount= request.user.productlist.all().count()
