@@ -49,7 +49,10 @@
                         </tr>
                         </tbody>
                     </table>
-
+                <form method="POST">{% csrf_token %}
+                    <button type="submit" name="csv" value="csv" class="btn btn-info" >CSV</button>
+                    <button type="submit" name="xsl" value="xsl" class="btn btn-info" >EXCEL</button>
+                </form>
 
 
                 </div>

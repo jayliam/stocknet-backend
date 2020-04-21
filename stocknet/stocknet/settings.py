@@ -49,7 +49,11 @@ INSTALLED_APPS = [
     'SS',
     'crispy_forms',
     'neworders',
+    'wkhtmltopdf',
 ]
+WKHTMLTOPDF_CMD_OPTIONS = {
+    'quiet': True,
+}
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

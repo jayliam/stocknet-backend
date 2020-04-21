@@ -10,7 +10,12 @@ from suppliers.models import Supplier
 from django.contrib import messages
 from django.utils import timezone
 from django.forms import inlineformset_factory
+# CSV and XLSX Stuff
+import csv
+from xlsxwriter.workbook import Workbook
+import io
 
+#
 from neworders.forms import nOrderCForm,nClientOrderForm,nSupplierOrderForm
 from neworders.models import nOrderS,nOrderC,nSupplierOrder,nClientOrder
 
@@ -1587,23 +1592,74 @@ def order_client_create(request):
         context.update(info(request))
         return render(request,"dashboard/order/order_client_create.html",context)
 
-def order_client_details(request, id):
+def order_client_details(request, id): #zz
     obj=get_object_or_404(nClientOrder, id=id)
-       
-    list_clients= request.user.clientlist.all()
-    Pcount= request.user.productlist.all().count()
-    Ccount= request.user.clientlist.all().count()
-    Scount= request.user.supplierlist.all().count()
-    context= {
-    "obj":obj,
-    "Pcount": Pcount,
-    "Ccount": Ccount,
-    "Scount": Scount,
-   
-    "list_clients" : list_clients
-    }
-    context.update(info(request))
-    return render(request,"dashboard/order/order_client_details.html",context)
+    if request.method == "POST":
+        if 'csv' in request.POST:
+            response = HttpResponse(content_type='text/csv')
+            filen = str(obj.Client) + " " + str(obj.Date) + ".csv"
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(filen)
+            writer = csv.writer(response)
+            writer.writerow(['Client', obj.Client])
+            writer.writerow(['Date', obj.Date])
+            writer.writerow(['Etat', obj.Status])
+            writer.writerow(['Produit','Prix de vente','Quantité','Total' ])
+            for o in obj.norderclist.all():
+                writer.writerow([o.Product,o.Product.SalesPrice,o.Quantity,o.line_total() ])
+            return response
+        else: 
+
+            output = io.BytesIO()
+
+            workbook = Workbook(output, {'in_memory': True})
+            worksheet = workbook.add_worksheet()
+            worksheet.write(0, 0, "Client")
+            worksheet.write(0, 1, str(obj.Client))
+            worksheet.write(1, 0, "Date")
+            worksheet.write(1, 1, str(obj.Date))
+            worksheet.write(2, 0, "Etat")
+            worksheet.write(2, 1, str(obj.Status))
+            worksheet.write(4, 0, "Produit")
+            worksheet.write(4, 1, "Prix")
+            worksheet.write(4, 2, "Quantité")
+            worksheet.write(4, 3, "Total")
+
+            i=5
+            for o in obj.norderclist.all():
+                #writer.writerow([o.Product,o.Product.SalesPrice,o.Quantity,o.line_total() ])
+                worksheet.write(i, 0, str(o.Product))
+                worksheet.write(i, 1, o.Product.SalesPrice)
+                worksheet.write(i, 2, o.Quantity)
+                worksheet.write(i, 3, o.line_total())
+                i=i+1
+            worksheet.write(i, 2, "Grand Total")
+            worksheet.write(i, 3, obj.Total)
+            workbook.close()
+
+            output.seek(0)
+            response = HttpResponse(output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")            
+            filen = str(obj.Client) + " " + str(obj.Date) + ".xlsx"
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(filen)
+
+            output.close()
+            return response
+    else: 
+        list_clients= request.user.clientlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "obj":obj,
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount,
+    
+        "list_clients" : list_clients
+        }
+        context.update(info(request))
+        
+        return render(request,"dashboard/order/order_client_details.html",context)
+    
 
 def order_supplier_details(request, id):
     obj=get_object_or_404(nSupplierOrder , id=id)
