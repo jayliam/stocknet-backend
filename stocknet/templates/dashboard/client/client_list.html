@@ -69,11 +69,14 @@ function toggle(source) {
 
                                     </tr>
                                 {% endfor %}
-                                <button type="submit" class="btn btn-danger  "><i class="fa-lg fa fa-trash"></i></button> 
+                                <button type="submit" name="del" value="del" class="btn btn-danger  "><i class="fa-lg fa fa-trash"></i></button> 
                                 </form>     
                                 </tbody>
                             </table>
-                
+                            <form method="POST">{% csrf_token %}
+                                <button type="submit" name="xls" value="xls" class="btn btn-info" >EXCEL</button>
+                                <button type="submit" name="pdf" value="pdf" class="btn btn-info" >PDF Impression</button>
+                            </form>
                         </div>
 
                     </div>

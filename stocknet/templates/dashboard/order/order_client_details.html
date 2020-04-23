@@ -43,15 +43,15 @@
 
                             <td> </td>
                             <td> </td>
-                            <td> Grand Total </td>
-                            <td>{{ obj.Total  }}</td>
+                            <td> <b>Grand Total</b>  </td>
+                            <td><b>{{ obj.Total  }}</b></td>
 
                         </tr>
                         </tbody>
                     </table>
                 <form method="POST">{% csrf_token %}
-                    <button type="submit" name="csv" value="csv" class="btn btn-info" >CSV</button>
-                    <button type="submit" name="xsl" value="xsl" class="btn btn-info" >EXCEL</button>
+                    <button type="submit" name="xls" value="xls" class="btn btn-info" >EXCEL</button>
+                    <button type="submit" name="pdf" value="pdf" class="btn btn-info" >PDF Impression</button>
                 </form>
 
 

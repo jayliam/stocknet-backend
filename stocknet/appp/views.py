@@ -14,6 +14,7 @@ from django.forms import inlineformset_factory
 import csv
 from xlsxwriter.workbook import Workbook
 import io
+from utils import render_to_pdf,maxx
 
 #
 from neworders.forms import nOrderCForm,nClientOrderForm,nSupplierOrderForm
@@ -510,19 +511,67 @@ def product_edit(request, id):
         return render(request,"dashboard/product/product_edit.html",context)
 
 def product_list(request):
-
+    list_products= request.user.productlist.all() 
     if request.method == 'POST':
-        selectedlist = request.POST.getlist('selectedlist')
+        if 'del' in request.POST:
+            selectedlist = request.POST.getlist('selectedlist')
+            for i in selectedlist:
+                #obj=get_object_or_404(Product, id=int(i))
+                obj = Product.objects.get(id=int(i))
+                delete_product_stock_track(obj,request)
+                obj.delete() 
+            return redirect('product_list') 
+        if 'xls' in request.POST: 
 
-        for i in selectedlist:
-            #obj=get_object_or_404(Product, id=int(i))
-            obj = Product.objects.get(id=int(i))
-            delete_product_stock_track(obj,request)
-            obj.delete() 
-        return redirect('product_list')      
+            output = io.BytesIO()
+
+            workbook = Workbook(output, {'in_memory': True})
+            worksheet = workbook.add_worksheet()
+
+            worksheet.write(4, 0, "Titre")
+            worksheet.write(4, 1, "Prix d'achat")
+            worksheet.write(4, 2, "Prix de vente")
+            worksheet.write(4, 3, "Reference")
+            worksheet.write(4, 4, "Fabricant")
+            worksheet.write(4, 5, "Fournisseurs")
+            worksheet.write(4, 6, "Categorie")
+            worksheet.write(4, 7, "Quantité")
+
+            i=5
+            for entry in list_products:
+                #writer.writerow([o.Product,o.Product.SalesPrice,o.Quantity,o.line_total() ])
+                worksheet.write(i, 0, entry.Title)
+                worksheet.write(i, 1, entry.PurchasePrice)
+                worksheet.write(i, 2, entry.SalesPrice)
+                worksheet.write(i, 3, entry.Reference)
+                worksheet.write(i, 4, entry.Manufacturer)
+                s=""
+                for ss in entry.Suppliers.all():
+                    s = s + ss.Name +","
+                worksheet.write(i, 5, s)
+                worksheet.write(i, 6, entry.Category)
+                worksheet.write(i, 7, entry.Quantity)
+                i=i+1
+
+            workbook.close()
+
+            output.seek(0)
+            response = HttpResponse(output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")            
+            filen = "produits.xlsx"
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(filen)
+
+            output.close()
+            return response
+        if 'pdf' in request.POST: 
+            context = {
+                "list_products" : list_products
+            }
+
+            return render_to_pdf("other/product_list.html",context)
+     
 
     else:
-        list_products= request.user.productlist.all()    
+           
         Pcount= request.user.productlist.all().count()
         Ccount= request.user.clientlist.all().count()
         Scount= request.user.supplierlist.all().count()
@@ -703,17 +752,75 @@ def client_edit(request,id):
         context.update(info(request))
         return render(request,"dashboard/client/client_edit.html",context)
 
-def client_list(request):
+def client_list(request): #zz
+    list_clients= request.user.clientlist.all()
     if request.method == 'POST':
-        selectedlist = request.POST.getlist('selectedlist')
+        if 'del' in request.POST:
+            selectedlist = request.POST.getlist('selectedlist')
+            for i in selectedlist:
+                obj = Client.objects.get(id=int(i))
+                obj.delete() 
+            return redirect('client_list')    
+        if 'xls' in request.POST: 
 
-        for i in selectedlist:
-            obj = Client.objects.get(id=int(i))
-            obj.delete() 
-        return redirect('client_list')      
+            output = io.BytesIO()
+
+            workbook = Workbook(output, {'in_memory': True})
+            worksheet = workbook.add_worksheet()
+
+            worksheet.write(4, 0, "Type")
+            worksheet.write(4, 1, "Nom")
+            worksheet.write(4, 2, "Telephone")
+            worksheet.write(4, 3, "Email")
+            worksheet.write(4, 4, "Référence")
+            worksheet.write(4, 5, "Adresse")
+            worksheet.write(4, 6, "Note")
+            
+            mx = 2
+
+            i=5
+            for entry in list_clients:
+                #writer.writerow([o.Product,o.Product.SalesPrice,o.Quantity,o.line_total() ])
+                worksheet.write(i, 0, entry.Type)
+                mx = maxx(mx , len(entry.Type) )
+                worksheet.write(i, 1, entry.Name)
+                mx = maxx(mx , len(entry.Name) )
+                worksheet.write(i, 2, str(entry.Phone))
+                mx = maxx(mx , len(entry.Phone) )
+                worksheet.write(i, 3, entry.Email)
+                mx = maxx(mx , len(entry.Email) )
+                worksheet.write(i, 4, entry.Reference)
+                mx = maxx(mx , len(entry.Reference) )
+                worksheet.write(i, 5, entry.Adress)
+                mx = maxx(mx , len(entry.Adress) )
+                worksheet.write(i, 6, entry.Note)
+                mx = maxx(mx , len(entry.Note) )
+                
+                i=i+1
+
+            for k in range(0,6):
+                worksheet.set_column(0, k, mx)
+            print(" mx ===============",mx)
+            workbook.close()
+
+            output.seek(0)
+            response = HttpResponse(output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")            
+            filen = "produits.xlsx"
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(filen)
+
+            output.close()
+            return response
+        if 'pdf' in request.POST: 
+            context = {
+                "list_clients" : list_clients 
+            }
+
+            return render_to_pdf("other/client_list.html",context)
+
+          
 
     else:
-        list_clients= request.user.clientlist.all()
+
         Pcount= request.user.productlist.all().count()
         Ccount= request.user.clientlist.all().count()
         Scount= request.user.supplierlist.all().count()
@@ -923,19 +1030,76 @@ def supplier_edit(request,id=id):
         return render(request,"dashboard/supplier/supplier_edit.html",context)
 
 def supplier_list(request):
+    list_suppliers= request.user.supplierlist.all()
     if request.method == 'POST':
-        selectedlist = request.POST.getlist('selectedlist')
+        if 'del' in request.POST:
+            selectedlist = request.POST.getlist('selectedlist')
+            for i in selectedlist:
+                #obj=get_object_or_404(Product, id=int(i))
+                obj = Supplier.objects.get(id=int(i))
+                obj.delete() 
+            return redirect('supplier_list') 
+        if 'xls' in request.POST: 
 
-        for i in selectedlist:
-            #obj=get_object_or_404(Product, id=int(i))
-            obj = Supplier.objects.get(id=int(i))
-            obj.delete() 
-        return redirect('supplier_list')      
+            output = io.BytesIO()
+
+            workbook = Workbook(output, {'in_memory': True})
+            worksheet = workbook.add_worksheet()
+
+            worksheet.write(4, 0, "Type")
+            worksheet.write(4, 1, "Nom")
+            worksheet.write(4, 2, "Telephone")
+            worksheet.write(4, 3, "Email")
+            worksheet.write(4, 4, "Référence")
+            worksheet.write(4, 5, "Adresse")
+            worksheet.write(4, 6, "Note")
+            
+            mx = 2
+
+            i=5
+            for entry in list_suppliers:
+                #writer.writerow([o.Product,o.Product.SalesPrice,o.Quantity,o.line_total() ])
+                worksheet.write(i, 0, entry.Type)
+                mx = maxx(mx , len(entry.Type) )
+                worksheet.write(i, 1, entry.Name)
+                mx = maxx(mx , len(entry.Name) )
+                worksheet.write(i, 2, str(entry.Phone))
+                mx = maxx(mx , len(entry.Phone) )
+
+                worksheet.write(i, 3, entry.Reference)
+                mx = maxx(mx , len(entry.Reference) )
+                worksheet.write(i, 4, entry.Category)
+                mx = maxx(mx , len(entry.Category) )
+                worksheet.write(i, 5, entry.Adress)
+                mx = maxx(mx , len(entry.Adress) )
+                worksheet.write(i, 6, entry.Note)
+                mx = maxx(mx , len(entry.Note) )
+                
+                i=i+1
+
+            for k in range(0,6):
+                worksheet.set_column(0, k, mx)
+            print(" mx ===============",mx)
+            workbook.close()
+
+            output.seek(0)
+            response = HttpResponse(output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")            
+            filen = "produits.xlsx"
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(filen)
+
+            output.close()
+            return response
+        if 'pdf' in request.POST: 
+            context = {
+                "list_suppliers" : list_suppliers 
+            }
+
+            return render_to_pdf("other/supplier_list.html",context)     
     else:
         Pcount= request.user.productlist.all().count()
         Ccount= request.user.clientlist.all().count()
         Scount= request.user.supplierlist.all().count()
-        list_suppliers= request.user.supplierlist.all()
+
         context= {
         "Pcount": Pcount,
         "Ccount": Ccount,
@@ -1592,22 +1756,10 @@ def order_client_create(request):
         context.update(info(request))
         return render(request,"dashboard/order/order_client_create.html",context)
 
-def order_client_details(request, id): #zz
+def order_client_details(request, id):  
     obj=get_object_or_404(nClientOrder, id=id)
     if request.method == "POST":
-        if 'csv' in request.POST:
-            response = HttpResponse(content_type='text/csv')
-            filen = str(obj.Client) + " " + str(obj.Date) + ".csv"
-            response['Content-Disposition'] = 'attachment; filename="{}"'.format(filen)
-            writer = csv.writer(response)
-            writer.writerow(['Client', obj.Client])
-            writer.writerow(['Date', obj.Date])
-            writer.writerow(['Etat', obj.Status])
-            writer.writerow(['Produit','Prix de vente','Quantité','Total' ])
-            for o in obj.norderclist.all():
-                writer.writerow([o.Product,o.Product.SalesPrice,o.Quantity,o.line_total() ])
-            return response
-        else: 
+        if 'xls' in request.POST: 
 
             output = io.BytesIO()
 
@@ -1643,6 +1795,12 @@ def order_client_details(request, id): #zz
 
             output.close()
             return response
+        if 'pdf' in request.POST: 
+            context = {
+                "obj" : obj
+            }
+
+            return render_to_pdf("other/order_client_detail.html",context)
     else: 
         list_clients= request.user.clientlist.all()
         Pcount= request.user.productlist.all().count()
@@ -1661,23 +1819,62 @@ def order_client_details(request, id): #zz
         return render(request,"dashboard/order/order_client_details.html",context)
     
 
-def order_supplier_details(request, id):
+def order_supplier_details(request, id): 
     obj=get_object_or_404(nSupplierOrder , id=id)
-       
-    list_clients= request.user.clientlist.all()
-    Pcount= request.user.productlist.all().count()
-    Ccount= request.user.clientlist.all().count()
-    Scount= request.user.supplierlist.all().count()
-    context= {
-    "obj":obj,
-    "Pcount": Pcount,
-    "Ccount": Ccount,
-    "Scount": Scount,
-   
-    "list_clients" : list_clients
-    }
-    context.update(info(request))
-    return render(request,"dashboard/order/order_supplier_details.html",context)
+    if request.method == "POST":
+        if 'xls' in request.POST: 
+            output = io.BytesIO()
+            workbook = Workbook(output, {'in_memory': True})
+            worksheet = workbook.add_worksheet()
+            worksheet.write(0, 0, "Fournisseur")
+            worksheet.write(0, 1, str(obj.Supplier))
+            worksheet.write(1, 0, "Date")
+            worksheet.write(1, 1, str(obj.Date))
+            worksheet.write(2, 0, "Etat")
+            worksheet.write(2, 1, str(obj.Status))
+            worksheet.write(4, 0, "Produit")
+            worksheet.write(4, 1, "Prix")
+            worksheet.write(4, 2, "Quantité")
+            worksheet.write(4, 3, "Total")
+            i=5
+            for o in obj.norderslist.all():
+                #writer.writerow([o.Product,o.Product.SalesPrice,o.Quantity,o.line_total() ])
+                worksheet.write(i, 0, str(o.Product))
+                worksheet.write(i, 1, o.Product.PurchasePrice)
+                worksheet.write(i, 2, o.Quantity)
+                worksheet.write(i, 3, o.line_total())
+                i=i+1
+            worksheet.write(i, 2, "Grand Total")
+            worksheet.write(i, 3, obj.Total)
+            workbook.close()
+
+            output.seek(0)
+            response = HttpResponse(output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")            
+            filen = str(obj.Supplier) + " " + str(obj.Date) + ".xlsx"
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(filen)
+            output.close()
+            return response
+        if 'pdf' in request.POST: 
+            context = {
+                "obj" : obj
+            }
+
+            return render_to_pdf("other/order_supplier_detail.html",context)
+    else:   
+        list_clients= request.user.clientlist.all()
+        Pcount= request.user.productlist.all().count()
+        Ccount= request.user.clientlist.all().count()
+        Scount= request.user.supplierlist.all().count()
+        context= {
+        "obj":obj,
+        "Pcount": Pcount,
+        "Ccount": Ccount,
+        "Scount": Scount,
+    
+        "list_clients" : list_clients
+        }
+        context.update(info(request))
+        return render(request,"dashboard/order/order_supplier_details.html",context)
 
 
 
