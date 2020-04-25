@@ -1413,6 +1413,7 @@ def order_supplier_create(request):
     OrderFormSet = inlineformset_factory( nSupplierOrder,nOrderS, fields = ('Product', 'Quantity',  ),extra= 10 )
     form = nSupplierOrderForm()
     form.fields['Supplier'].queryset = Supplier.objects.filter(user=request.user)
+    form.fields['Supplier'].label = "Fournisseur"
     #oform = nOrderCForm() 
     formset = OrderFormSet()
     for ff in formset.forms:
@@ -1420,6 +1421,7 @@ def order_supplier_create(request):
         ff.fields['Product'].label = "Produit"
         ff.fields['Quantity'].label = "Quantité"
     if request.method == "POST":
+        
         form = nSupplierOrderForm(request.POST)
         if form.is_valid():
             nC=form.save()
