@@ -129,7 +129,7 @@ def stockoforderC(order):
     return t
      
 
-def create_stock_track_client(request,order):
+def create_stock_track_client(request,order):  #xz
 
     stocktraking = request.user.stocktracklist.order_by('Date')
     b = False
@@ -146,13 +146,30 @@ def create_stock_track_client(request,order):
                 Stock = 0,
                 Date = order.Date
             )
+            newTrack.save()
+            Newstocktraking = request.user.stocktracklist.order_by('Date')
+            ii=0
+            sti = 0
+            print("we here 1 --------------------------")
+            for tt in Newstocktraking:
+                if order.Date == tt.Date :
+                    b = True
+                    st = t
+                    sti = ii +1
+                else : ii = ii + 1
+
+            newTrack.Stock = Newstocktraking[sti].Stock  - QoforderC(order) 
+            newTrack.save()
+            print("we here 2 --------------------------")
+
         else :
             newTrack = StockTrack(
                 Stock = stocktraking.reverse()[0].Stock - QoforderC(order),
                 Date = order.Date
             )
+            newTrack.save()
 
-        newTrack.save()
+        
         request.user.stocktracklist.add(newTrack)
 
 def create_stock_track_supplier(request,order):
@@ -1431,7 +1448,6 @@ def order_supplier_create(request):
                 o = formset.save()
                 tot=0
                 for i in o:
-
                     tot=tot + (i.Quantity * i.Product.SalesPrice)
                 nC.Total=tot
                 nC.save()    
@@ -1644,7 +1660,7 @@ def order_client_deliver(request, id):
             o.Product.save()
         order.Status='livré'
         order.save()
-        create_stock_track_client(request,order)
+        create_stock_track_client(request,order) #zz
         messages.info(request,'Produit livré')
         return redirect('order_client_list')
        
@@ -1733,7 +1749,6 @@ def order_client_create(request):
                 o = formset.save()
                 tot=0
                 for i in o:
-
                     tot=tot + (i.Quantity * i.Product.SalesPrice)
                 nC.Total=tot
                 nC.save()    

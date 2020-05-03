@@ -4,7 +4,7 @@ from clients.models import Client
 from suppliers.models import Supplier
 
 from django.contrib.auth.models import User
-# Create your models here.
+
 Values = [
     ('en attente', 'en attente'),
     ('livré', 'livré'),
