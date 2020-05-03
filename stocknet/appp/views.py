@@ -1965,9 +1965,9 @@ def order_supplier_edit(request,id):
             nC=form.save()
             nC.Status = Status
             formset = OrderFormSet(request.POST, instance = nC)
-            print("we here 1111111Z33")
+            
             if formset.is_valid():
-                print("we here 22222222Z33" ,request.POST)
+                
                 #delete older orders before updating
                 o = obj.norderslist.all()
                 for ob in o:
