@@ -19,6 +19,8 @@ class Product(models.Model):
         return self.Title    
 
 class StockTrack(models.Model):
-    Stock      = models.DecimalField(decimal_places=2, max_digits=20, default=0, null=True) 
+    Stock         = models.DecimalField(decimal_places=2, max_digits=20, default=0, null=True) 
+    In            = models.DecimalField(decimal_places=2, max_digits=20, default=0, null=True) 
+    Out           = models.DecimalField(decimal_places=2, max_digits=20, default=0, null=True) 
     Date          = models.DateField( null=True)  
     user          = models.ForeignKey(User, on_delete=models.CASCADE, related_name="stocktracklist", null=True) # <--- added
