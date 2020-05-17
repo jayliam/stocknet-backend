@@ -7,10 +7,11 @@ from products.models import Product,StockTrack
 from clients.models import Client
 from orders.models import SupplierOrder,ClientOrder
 from suppliers.models import Supplier
+
+#
 from django.contrib import messages
 from django.utils import timezone
 from django.forms import inlineformset_factory
-# CSV and XLSX Stuff
 import csv
 from xlsxwriter.workbook import Workbook
 import io
@@ -22,11 +23,13 @@ from neworders.models import nOrderS,nOrderC,nSupplierOrder,nClientOrder
 
 
 def init_stock_track(request):
-    today=timezone.now().date()
+    today = timezone.now().date()
     stocktraking = request.user.stocktracklist.order_by('Date')
     if stocktraking.count() == 0 : 
         newTrack = StockTrack(
             Stock = 0,
+            In = 0,
+            Out = 0,
             Date = today
         )
         newTrack.save()
@@ -42,10 +45,12 @@ def product_stock_track(product,request):
                 st=t
         if b:
             st.Stock = int(st.Stock) + int(product.Quantity)
+            st.In = int(st.In) + int(product.Quantity)
             st.save()
         else:
             newTrack = StockTrack(
                 Stock = int(stocktraking.reverse()[0].Stock) + int(product.Quantity),
+                In = int(product.Quantity),
                 Date = today
             )
 
@@ -56,12 +61,16 @@ def product_stock_track(product,request):
             newTrack = StockTrack(
                     
                     Stock = int(product.Quantity),
+                    In = int(product.Quantity),
+                    Out = 0,
                     Date = today
                 )
         if int (product.Quantity) < 0 :
             newTrack = StockTrack(
                     
                     Stock = 0,
+                    In = 0,
+                    Out = 0,
                     Date = today
                 )
         newTrack.save()
@@ -78,10 +87,13 @@ def delete_product_stock_track(product,request):
                 st=t
         if b:
             st.Stock = int(st.Stock) - int(product.Quantity)
+            st.Out = int(product.Quantity)
             st.save()
         else:
             newTrack = StockTrack(
                 Stock = int(stocktraking.reverse()[0].Stock) - int(product.Quantity),
+                Out = int(product.Quantity),
+                In = 0,
                 Date = today
             )
 
@@ -98,10 +110,13 @@ def create_stock_track_client_confirm(request,order):
             st = t
     if b : 
         st.Stock = st.Stock - int(stockoforderC(order))
+        st.Out = int(stockoforderC(order))
         st.save()
     else:
         newTrack = StockTrack(
             Stock = stocktraking.reverse()[0].Stock - stockoforderC(order),
+            Out = stockoforderC(order),
+            In = 0,
             Date = order.Date
         )
         newTrack.save()
@@ -129,7 +144,7 @@ def stockoforderC(order):
     return t
      
 
-def create_stock_track_client(request,order):
+def create_stock_track_client(request,order):  #xz
 
     stocktraking = request.user.stocktracklist.order_by('Date')
     b = False
@@ -139,20 +154,43 @@ def create_stock_track_client(request,order):
             st = t
     if b : 
         st.Stock = st.Stock - QoforderC(order)
+        st.Out = QoforderC(order)
         st.save()
     else:
         if order.Date <  stocktraking.reverse()[0].Date :
             newTrack = StockTrack(
                 Stock = 0,
+                In = 0,
+                Out = 0,
                 Date = order.Date
             )
+            newTrack.save()
+            Newstocktraking = request.user.stocktracklist.order_by('Date')
+            ii=0
+            sti = 0
+            print("we here 1 --------------------------")
+            for tt in Newstocktraking:
+                if order.Date == tt.Date :
+                    b = True
+                    st = t
+                    sti = ii +1
+                else : ii = ii + 1
+
+            newTrack.Stock = Newstocktraking[sti].Stock  - QoforderC(order) 
+            newTrack.Out = QoforderC(order) 
+            newTrack.save()
+            print("we here 2 --------------------------")
+
         else :
             newTrack = StockTrack(
                 Stock = stocktraking.reverse()[0].Stock - QoforderC(order),
+                Out = QoforderC(order),
+                In = 0,
                 Date = order.Date
             )
+            newTrack.save()
 
-        newTrack.save()
+        
         request.user.stocktracklist.add(newTrack)
 
 def create_stock_track_supplier(request,order):
@@ -164,17 +202,22 @@ def create_stock_track_supplier(request,order):
             st = t
     if b : 
         st.Stock = st.Stock + QoforderS(order)
+        st.In = st.In + QoforderS(order)
         st.save()
     else:
         if order.Date <  stocktraking.reverse()[0].Date :
             newTrack = StockTrack(
                 Stock = QoforderS(order),
+                In = QoforderS(order),
+                Out = 0,
                 Date = order.Date
             )
         else:    
             
             newTrack = StockTrack(
-                Stock = stocktraking.reverse()[0].Stock + QoforderS(order)  ,
+                Stock = stocktraking.reverse()[0].Stock + QoforderS(order),
+                In = QoforderS(order),
+                Out = 0,
                 Date = order.Date
             )
             newTrack.save()
@@ -193,9 +236,13 @@ def info(request):
     
     strack=[]
     dtrack=[]
+    intrack=[]
+    outtrack=[]
     stocktraking = request.user.stocktracklist.order_by('Date')[:30]
     for t in stocktraking:
         strack.append(int(t.Stock))
+        intrack.append(int(t.In))
+        outtrack.append(int(t.Out))
         dtrack.append(str(t.Date))
     
 
@@ -216,6 +263,8 @@ def info(request):
     context= {
         "stock_neg": stock_neg,
         "notif": notif,
+        "outtrack": outtrack,
+        "intrack": intrack,
         "OScount": OScount,
         "OCcount": OCcount,
         "PendingOrdersCount": PendingOrdersCount,
@@ -1413,6 +1462,7 @@ def order_supplier_create(request):
     OrderFormSet = inlineformset_factory( nSupplierOrder,nOrderS, fields = ('Product', 'Quantity',  ),extra= 10 )
     form = nSupplierOrderForm()
     form.fields['Supplier'].queryset = Supplier.objects.filter(user=request.user)
+    form.fields['Supplier'].label = "Fournisseur"
     #oform = nOrderCForm() 
     formset = OrderFormSet()
     for ff in formset.forms:
@@ -1420,6 +1470,7 @@ def order_supplier_create(request):
         ff.fields['Product'].label = "Produit"
         ff.fields['Quantity'].label = "Quantité"
     if request.method == "POST":
+        
         form = nSupplierOrderForm(request.POST)
         if form.is_valid():
             nC=form.save()
@@ -1429,7 +1480,6 @@ def order_supplier_create(request):
                 o = formset.save()
                 tot=0
                 for i in o:
-
                     tot=tot + (i.Quantity * i.Product.SalesPrice)
                 nC.Total=tot
                 nC.save()    
@@ -1642,7 +1692,7 @@ def order_client_deliver(request, id):
             o.Product.save()
         order.Status='livré'
         order.save()
-        create_stock_track_client(request,order)
+        create_stock_track_client(request,order) #zz
         messages.info(request,'Produit livré')
         return redirect('order_client_list')
        
@@ -1731,7 +1781,6 @@ def order_client_create(request):
                 o = formset.save()
                 tot=0
                 for i in o:
-
                     tot=tot + (i.Quantity * i.Product.SalesPrice)
                 nC.Total=tot
                 nC.save()    
@@ -1937,6 +1986,8 @@ def order_supplier_edit(request,id):
     OrderFormSet = inlineformset_factory( nSupplierOrder,nOrderS, fields = ('Product', 'Quantity',  ),extra= 10 )
     form = nSupplierOrderForm(instance=obj)
     formset = OrderFormSet()
+    form.fields['Supplier'].queryset = Supplier.objects.filter(user=request.user)
+    form.fields['Supplier'].label = "Fournisseur"
     for ff in formset.forms:
         ff.fields['Product'].queryset = Product.objects.filter(user=request.user)
         ff.fields['Product'].label = "Produit"
@@ -1948,9 +1999,9 @@ def order_supplier_edit(request,id):
             nC=form.save()
             nC.Status = Status
             formset = OrderFormSet(request.POST, instance = nC)
-            print("we here 1111111Z33")
+            
             if formset.is_valid():
-                print("we here 22222222Z33" ,request.POST)
+                
                 #delete older orders before updating
                 o = obj.norderslist.all()
                 for ob in o:

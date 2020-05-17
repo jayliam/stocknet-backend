@@ -8,11 +8,26 @@ var chLine = document.getElementById("chLine");
 var chartData = {
   labels: JSdtrack,
   datasets: [{
+    label: 'Stock',
     data: JSstrack,
     backgroundColor: 'transparent',
     borderColor: colors[0],
     borderWidth: 4,
     pointBackgroundColor: colors[0]
+  },{
+    label: 'Stock en entré',
+    data: JSintrack,
+    backgroundColor: 'transparent',
+    borderColor: colors[1],
+    borderWidth: 4,
+    pointBackgroundColor: colors[1]
+  },{
+    label: "Stock en Sortie",
+    data: JSouttrack,
+    backgroundColor: 'transparent',
+    borderColor: colors[4],
+    borderWidth: 4,
+    pointBackgroundColor: colors[4]
   },
   ]
 };
@@ -30,7 +45,7 @@ if (chLine) {
       }]
     },
     legend: {
-      display: false
+      display: true
     }
   }
   });
@@ -65,13 +80,16 @@ borderWidth: 1
 }]
 },
 options: {
-scales: {
-yAxes: [{
-ticks: {
-beginAtZero: true
-}
-}]
-}
+  scales: {
+        yAxes: [{
+        ticks: {
+        beginAtZero: true
+        }
+              }]
+      },
+      legend: {
+        display: false
+      }
 }
 });
 //bar2
@@ -109,6 +127,9 @@ ticks: {
 beginAtZero: true
 }
 }]
+},
+legend: {
+  display: false
 }
 }
 });
@@ -146,6 +167,9 @@ ticks: {
 beginAtZero: true
 }
 }]
+},
+legend: {
+  display: false
 }
 }
 });
@@ -184,6 +208,9 @@ ticks: {
 beginAtZero: true
 }
 }]
+},
+legend: {
+  display: false
 }
 }
 });
@@ -221,6 +248,9 @@ ticks: {
 beginAtZero: true
 }
 }]
+},
+legend: {
+  display: false
 }
 }
 });
