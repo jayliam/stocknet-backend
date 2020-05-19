@@ -27,7 +27,6 @@ class nSupplierOrder(models.Model):
     Status        = models.CharField(max_length=20, choices=Values, null=True)
     user          = models.ForeignKey(User, on_delete=models.CASCADE, related_name="nsupplierorderlist", null=True) # <--- added
     Total         = models.DecimalField(decimal_places=2, max_digits=20, default=0, null=True)
-    
 
 
 class nOrderC(models.Model):
